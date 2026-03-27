@@ -9,6 +9,7 @@ const navItems = [
   { href: '/tutor/students', label: 'My Students' },
   { href: '/tutor/schedule', label: 'Schedule' },
   { href: '/tutor/billing', label: 'Billing' },
+  { href: '/tutor/profile', label: 'Profile' },
 ];
 
 export function TutorNav() {
@@ -19,9 +20,8 @@ export function TutorNav() {
       {navItems.map((item) => {
         const isActive = pathname === item.href;
         return (
-          <div className='px-1 py-1.5 bg-slate-100 rounded-2xl hover:scale-105 transition'>
+          <div key={item.href} className='px-1 py-1.5 bg-slate-100 rounded-2xl hover:scale-105 transition'>
             <Link
-              key={item.href}
               href={item.href}
               className={cn(
                 'rounded-2xl px-3 py-2 text-sm font-medium  shadow-sm shadow-slate-500 ',
