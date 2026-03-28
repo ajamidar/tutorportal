@@ -1,14 +1,77 @@
 'use client';
 
-import { useState } from 'react';
+import { FormEvent, useMemo, useState } from 'react';
 import { signInAction, signUpAction } from './actions';
 
 type LoginFormProps = {
   error?: string;
 };
 
+const STRENGTH_LEVELS = ['Very weak', 'Weak', 'Fair', 'Strong', 'Very strong'] as const;
+
+function getPasswordStrengthScore(password: string): number {
+  if (!password) return 0;
+
+  let score = 0;
+
+  if (password.length >= 8) score += 1;
+  if (password.length >= 12) score += 1;
+  if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score += 1;
+  if (/\d/.test(password)) score += 1;
+  if (/[^A-Za-z0-9]/.test(password)) score += 1;
+
+  return Math.min(score, 4);
+}
+
+function getStrengthColor(score: number): string {
+  if (score <= 1) return 'bg-red-500';
+  if (score === 2) return 'bg-amber-500';
+  if (score === 3) return 'bg-sky-500';
+  return 'bg-emerald-500';
+}
+
 export default function LoginForm({ error }: LoginFormProps) {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
+
+  const passwordScore = useMemo(() => getPasswordStrengthScore(password), [password]);
+  const strengthWidth = ((passwordScore + 1) / 5) * 100;
+
+  const activeError = localError ?? error;
+
+  function handleModeChange(nextMode: 'signin' | 'signup') {
+    setMode(nextMode);
+    setLocalError(null);
+    setPassword('');
+    setConfirmPassword('');
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    if (mode !== 'signup') {
+      setLocalError(null);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      event.preventDefault();
+      setLocalError('Passwords do not match.');
+      return;
+    }
+
+    if (passwordScore < 2) {
+      event.preventDefault();
+      setLocalError('Choose a stronger password (at least 8+ chars with mixed character types).');
+      return;
+    }
+
+    setLocalError(null);
+  }
 
   return (
     <main className="flex min-h-screen items-center px-4 py-10 sm:py-14">
@@ -26,7 +89,7 @@ export default function LoginForm({ error }: LoginFormProps) {
         <div className="mt-4 grid grid-cols-2 gap-2 rounded-xl border border-slate-200 bg-slate-50 p-1">
           <button
             type="button"
-            onClick={() => setMode('signin')}
+            onClick={() => handleModeChange('signin')}
             className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
               mode === 'signin'
                 ? 'bg-blue-600 text-white shadow-sm'
@@ -37,7 +100,7 @@ export default function LoginForm({ error }: LoginFormProps) {
           </button>
           <button
             type="button"
-            onClick={() => setMode('signup')}
+            onClick={() => handleModeChange('signup')}
             className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
               mode === 'signup'
                 ? 'bg-blue-600 text-white shadow-sm'
@@ -48,13 +111,17 @@ export default function LoginForm({ error }: LoginFormProps) {
           </button>
         </div>
 
-        {error ? (
+        {activeError ? (
           <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-            {error}
+            {activeError}
           </p>
         ) : null}
 
-        <form action={mode === 'signin' ? signInAction : signUpAction} className="mt-5 space-y-4">
+        <form
+          action={mode === 'signin' ? signInAction : signUpAction}
+          onSubmit={handleSubmit}
+          className="mt-5 space-y-4"
+        >
           <div className="space-y-2">
             <label htmlFor="email" className="text-sm font-medium text-slate-800">
               Email
@@ -73,18 +140,78 @@ export default function LoginForm({ error }: LoginFormProps) {
             <label htmlFor="password" className="text-sm font-medium text-slate-800">
               Password
             </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none ring-0 transition placeholder:text-slate-400 focus:border-blue-400"
-              placeholder="Your password"
-            />
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                required
+                value={password}
+                onChange={(event) => {
+                  setPassword(event.target.value);
+                  if (localError) setLocalError(null);
+                }}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 pr-20 text-sm outline-none ring-0 transition placeholder:text-slate-400 focus:border-blue-400"
+                placeholder="Your password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((current) => !current)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
           </div>
 
           {mode === 'signup' ? (
             <>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs text-slate-600">
+                  <span>Password strength</span>
+                  <span className="font-medium text-slate-700">{STRENGTH_LEVELS[passwordScore]}</span>
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
+                  <div
+                    className={`h-full rounded-full transition-all duration-300 ${getStrengthColor(passwordScore)}`}
+                    style={{ width: `${strengthWidth}%` }}
+                  />
+                </div>
+                <p className="text-xs text-slate-500" aria-live="polite">
+                  Use at least 8 characters with uppercase, lowercase, numbers, and symbols.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="confirm_password" className="text-sm font-medium text-slate-800">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="confirm_password"
+                    name="confirm_password"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    required
+                    value={confirmPassword}
+                    onChange={(event) => {
+                      setConfirmPassword(event.target.value);
+                      if (localError) setLocalError(null);
+                    }}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-2 pr-20 text-sm outline-none ring-0 transition placeholder:text-slate-400 focus:border-blue-400"
+                    placeholder="Re-enter your password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((current) => !current)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+                    aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+                  >
+                    {showConfirmPassword ? 'Hide' : 'Show'}
+                  </button>
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <label htmlFor="full_name" className="text-sm font-medium text-slate-800">
                   Full Name
@@ -108,7 +235,7 @@ export default function LoginForm({ error }: LoginFormProps) {
                   defaultValue="client"
                   className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none ring-0 transition focus:border-blue-400"
                 >
-                  <option value="client">Client (Parent/Student)</option>
+                  <option value="client">Student (Parent/Student)</option>
                   <option value="tutor">Tutor</option>
                 </select>
               </div>
