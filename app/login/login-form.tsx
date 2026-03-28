@@ -78,7 +78,7 @@ export default function LoginForm({ error }: LoginFormProps) {
       <div className="mx-auto w-full max-w-md rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-lg sm:p-7">
         <div className="mb-5">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
-            Trusted Institution
+            #1 Platform for tutors and students
           </p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">TutorPortal</h1>
         </div>
