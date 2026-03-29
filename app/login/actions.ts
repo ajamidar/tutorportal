@@ -95,7 +95,7 @@ export async function signUpAction(formData: FormData) {
     redirect(`/login?error=${encodeURIComponent(error.message)}`);
   }
 
-  // If email confirmation is enabled, a session may not exist yet.
+  // If email confirmation is enabled, a session may not exist yet..
   if (!data.session) {
     redirect('/login?error=Check+your+email+to+confirm+your+account+then+sign+in');
   }
