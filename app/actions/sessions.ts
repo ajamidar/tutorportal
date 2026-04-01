@@ -7,6 +7,7 @@ import { createClient } from '@/utils/supabase/server';
 export type TutorSession = {
   id: string;
   client_id: string;
+  subject: string | null;
   start_time: string;
   end_time: string;
   is_recurring: boolean;
@@ -19,6 +20,7 @@ export type TutorSession = {
 
 type CreateSessionInput = {
   client_id: string;
+  subject: string;
   start_time: string;
   end_time: string;
   is_recurring: boolean;
@@ -37,7 +39,7 @@ export async function getTutorSessions(startDate: string, endDate: string): Prom
   const { data, error } = await supabase
     .from('sessions')
     .select(
-      'id, client_id, start_time, end_time, is_recurring, recurring_group_id, student:client_profiles(student_name, target_grade)'
+      'id, client_id, subject, start_time, end_time, is_recurring, recurring_group_id, student:client_profiles(student_name, target_grade)'
     )
     .eq('tutor_id', user.id)
     .gte('start_time', startDate)
@@ -54,6 +56,7 @@ export async function getTutorSessions(startDate: string, endDate: string): Prom
     return {
       id: row.id,
       client_id: row.client_id,
+      subject: row.subject,
       start_time: row.start_time,
       end_time: row.end_time,
       is_recurring: row.is_recurring,
@@ -91,7 +94,7 @@ export async function createSession(input: CreateSessionInput) {
 
   const { data: rosterStudent, error: rosterError } = await supabase
     .from('client_profiles')
-    .select('id')
+    .select('id, subject')
     .eq('id', input.client_id)
     .eq('tutor_id', user.id)
     .maybeSingle();
@@ -102,6 +105,24 @@ export async function createSession(input: CreateSessionInput) {
 
   if (!rosterStudent) {
     return { ok: false, error: 'Selected student was not found in your roster.' };
+  }
+
+  const selectedSubject = input.subject.trim();
+
+  if (!selectedSubject) {
+    return { ok: false, error: 'Please select a subject for the session.' };
+  }
+
+  const matchesRosterSubject = await supabase
+    .from('client_profiles')
+    .select('id')
+    .eq('id', input.client_id)
+    .eq('tutor_id', user.id)
+    .eq('subject', selectedSubject)
+    .maybeSingle();
+
+  if (!matchesRosterSubject.data) {
+    return { ok: false, error: 'Selected subject does not match the student roster entry.' };
   }
 
   const isRecurring = Boolean(input.is_recurring);
@@ -118,6 +139,7 @@ export async function createSession(input: CreateSessionInput) {
     return {
       tutor_id: user.id,
       client_id: input.client_id,
+      subject: selectedSubject,
       start_time: startTime.toISOString(),
       end_time: endTime.toISOString(),
       is_recurring: isRecurring,

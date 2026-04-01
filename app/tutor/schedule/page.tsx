@@ -99,11 +99,53 @@ export default async function TutorSchedulePage({ searchParams }: TutorScheduleP
     getTutorStudents(),
   ]);
 
-  const studentOptions = students.map((student) => ({
-    id: student.id,
-    student_name: student.student_name,
-    target_grade: student.target_grade,
-  }));
+  const groupedStudentMap = new Map<
+    string,
+    {
+      studentKey: string;
+      studentName: string;
+      level: 'gcse' | 'a_level';
+      clientEmail: string;
+      clientFullName: string | null;
+      subjects: Array<{
+        id: string;
+        subject: string;
+        examBoard: string;
+        currentWorkingGrade: string | null;
+        targetGrade: string | null;
+      }>;
+    }
+  >();
+
+  for (const student of students) {
+    const key = `${student.client_id}:${student.student_name}:${student.level}`;
+    const existing = groupedStudentMap.get(key);
+    const subjectEntry = {
+      id: student.id,
+      subject: student.subject,
+      examBoard: student.exam_board,
+      currentWorkingGrade: student.current_working_grade,
+      targetGrade: student.target_grade,
+    };
+
+    if (!existing) {
+      groupedStudentMap.set(key, {
+        studentKey: key,
+        studentName: student.student_name,
+        level: student.level,
+        clientEmail: student.client.email,
+        clientFullName: student.client.full_name,
+        subjects: [subjectEntry],
+      });
+      continue;
+    }
+
+    existing.subjects.push(subjectEntry);
+  }
+
+  const studentOptions = Array.from(groupedStudentMap.values()).sort((a, b) =>
+    a.studentName.localeCompare(b.studentName)
+  );
 
   const daysInMonth = getDaysInMonth(year, month);
   const selectedDay = clamp(day, 1, daysInMonth);
@@ -280,6 +322,9 @@ export default async function TutorSchedulePage({ searchParams }: TutorScheduleP
                   <p className="mt-1 text-sm text-slate-700">
                     {formatTime(session.start_time)} - {formatTime(session.end_time)}
                   </p>
+                  {session.subject ? (
+                    <p className="mt-1 text-xs font-medium text-blue-700">{session.subject}</p>
+                  ) : null}
                   {session.student?.target_grade ? (
                     <p className="mt-1 text-xs text-slate-600">Target {session.student.target_grade}</p>
                   ) : null}

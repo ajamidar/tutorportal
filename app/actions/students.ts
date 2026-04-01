@@ -42,6 +42,13 @@ export async function getTutorStudents(): Promise<TutorStudent[]> {
 
   return (data ?? []).map((row) => {
     const client = Array.isArray(row.client) ? row.client[0] : row.client;
+    const currentWorkingGrade =
+      typeof row.current_working_grade === 'string'
+        ? row.current_working_grade
+        : (row.current_working_grade ?? null);
+    const targetGrade =
+      typeof row.target_grade === 'string' ? row.target_grade : (row.target_grade ?? null);
+
     return {
       id: row.id,
       client_id: row.client_id,
@@ -49,8 +56,8 @@ export async function getTutorStudents(): Promise<TutorStudent[]> {
       subject: row.subject,
       level: row.level,
       exam_board: row.exam_board,
-      current_working_grade: row.current_working_grade,
-      target_grade: row.target_grade,
+      current_working_grade: currentWorkingGrade,
+      target_grade: targetGrade,
       client: {
         email: client?.email ?? '',
         full_name: client?.full_name ?? null,

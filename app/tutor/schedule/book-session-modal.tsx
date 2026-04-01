@@ -4,14 +4,29 @@ import { useMemo, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { createSession } from '@/app/actions/sessions';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 type StudentOption = {
-  id: string;
-  student_name: string;
-  target_grade: string | null;
+  studentKey: string;
+  studentName: string;
+  level: 'gcse' | 'a_level';
+  clientEmail: string;
+  clientFullName: string | null;
+  subjects: Array<{
+    id: string;
+    subject: string;
+    examBoard: string;
+    currentWorkingGrade: string | null;
+    targetGrade: string | null;
+  }>;
 };
 
 type BookSessionModalProps = {
@@ -34,7 +49,8 @@ function toIsoFromLocal(dateValue: string, timeValue: string): string | null {
 export function BookSessionModal({ students }: BookSessionModalProps) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const [clientId, setClientId] = useState(students[0]?.id ?? '');
+  const [selectedStudentKey, setSelectedStudentKey] = useState(students[0]?.studentKey ?? '');
+  const [selectedSubjectId, setSelectedSubjectId] = useState(students[0]?.subjects[0]?.id ?? '');
   const [date, setDate] = useState('');
   const [startTime, setStartTime] = useState('16:00');
   const [endTime, setEndTime] = useState('17:00');
@@ -43,12 +59,21 @@ export function BookSessionModal({ students }: BookSessionModalProps) {
   const hasStudents = students.length > 0;
 
   const selectedStudent = useMemo(
-    () => students.find((item) => item.id === clientId) ?? null,
-    [clientId, students]
+    () => students.find((item) => item.studentKey === selectedStudentKey) ?? null,
+    [selectedStudentKey, students]
   );
 
+  const selectedSubject = useMemo(
+    () => selectedStudent?.subjects.find((item) => item.id === selectedSubjectId) ?? null,
+    [selectedStudent, selectedSubjectId]
+  );
+
+  const subjectOptions = selectedStudent?.subjects ?? [];
+
   function resetForm() {
-    setClientId(students[0]?.id ?? '');
+    const firstStudent = students[0] ?? null;
+    setSelectedStudentKey(firstStudent?.studentKey ?? '');
+    setSelectedSubjectId(firstStudent?.subjects[0]?.id ?? '');
     setDate('');
     setStartTime('16:00');
     setEndTime('17:00');
@@ -70,6 +95,9 @@ export function BookSessionModal({ students }: BookSessionModalProps) {
       </DialogTrigger>
       <DialogContent>
         <DialogTitle className="text-lg font-semibold text-slate-900 sm:text-xl">Book Session</DialogTitle>
+        <DialogDescription className="sr-only">
+          Create a one-off or recurring tutoring session for a selected student.
+        </DialogDescription>
 
         {!hasStudents ? (
           <p className="mt-3 text-sm text-slate-600">Add a student first before booking sessions.</p>
@@ -79,7 +107,7 @@ export function BookSessionModal({ students }: BookSessionModalProps) {
             onSubmit={(event) => {
               event.preventDefault();
 
-              if (!clientId) {
+              if (!selectedStudent || !selectedSubject) {
                 toast.error('Please select a student.');
                 return;
               }
@@ -94,7 +122,8 @@ export function BookSessionModal({ students }: BookSessionModalProps) {
 
               startTransition(async () => {
                 const result = await createSession({
-                  client_id: clientId,
+                  client_id: selectedSubject.id,
+                  subject: selectedSubject.subject,
                   start_time: startIso,
                   end_time: endIso,
                   is_recurring: isRecurring,
@@ -119,19 +148,46 @@ export function BookSessionModal({ students }: BookSessionModalProps) {
               <Label htmlFor="student">Student</Label>
               <select
                 id="student"
-                value={clientId}
-                onChange={(event) => setClientId(event.target.value)}
+                value={selectedStudentKey}
+                onChange={(event) => {
+                  const nextStudent = students.find((item) => item.studentKey === event.target.value) ?? null;
+                  setSelectedStudentKey(event.target.value);
+                  setSelectedSubjectId(nextStudent?.subjects[0]?.id ?? '');
+                }}
                 className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/40"
               >
                 {students.map((student) => (
-                  <option key={student.id} value={student.id}>
-                    {student.student_name}
-                    {student.target_grade ? ` - Target ${student.target_grade}` : ''}
+                  <option key={student.studentKey} value={student.studentKey}>
+                    {student.studentName} ({student.level === 'a_level' ? 'A-Level' : 'GCSE'})
                   </option>
                 ))}
               </select>
-              {selectedStudent?.target_grade ? (
-                <p className="text-xs text-slate-500">Target grade: {selectedStudent.target_grade}</p>
+              {selectedStudent ? (
+                <p className="text-xs text-slate-500">
+                  {selectedStudent.clientFullName ? `${selectedStudent.clientFullName} · ` : ''}
+                  {selectedStudent.clientEmail}
+                </p>
+              ) : null}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="subject">Subject</Label>
+              <select
+                id="subject"
+                value={selectedSubjectId}
+                onChange={(event) => setSelectedSubjectId(event.target.value)}
+                className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/40"
+              >
+                {subjectOptions.map((subject) => (
+                  <option key={subject.id} value={subject.id}>
+                    {subject.subject} · {subject.examBoard}
+                  </option>
+                ))}
+              </select>
+              {selectedSubject ? (
+                <p className="text-xs text-slate-500">
+                  Current {selectedSubject.currentWorkingGrade ?? 'Not set'} · Target {selectedSubject.targetGrade ?? 'Not set'}
+                </p>
               ) : null}
             </div>
 
