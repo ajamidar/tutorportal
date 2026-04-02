@@ -91,7 +91,7 @@ export function AddStudentModal() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full sm:w-auto">Add Student</Button>
+        <Button className="w-full sm:w-auto border-blue-800 shadow-sm shadow-blue-900"><span className='text-lg border-white border rounded-full px-1.5 mr-1'>✚</span>Add Student </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[85vh] overflow-y-auto">
         <DialogTitle className="text-lg font-semibold text-slate-900 sm:text-xl">

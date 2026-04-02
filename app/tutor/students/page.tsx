@@ -1,22 +1,23 @@
 import { getTutorStudents } from '@/app/actions/students';
 import { AddStudentModal } from './add-student-modal';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { StudentDetailsModal } from './student-details-modal';
+import { StudentsRoster } from './students-roster';
+
+type GroupedStudent = {
+  student_name: string;
+  level: 'gcse' | 'a_level';
+  client: { email: string; full_name: string | null };
+  subjects: Array<{
+    id: string;
+    subject: string;
+    exam_board: string;
+    current_working_grade: string | null;
+    target_grade: string | null;
+  }>;
+};
 
 export default async function TutorStudentsPage() {
   const students = await getTutorStudents();
-  const groupedMap = new Map<string, {
-    student_name: string;
-    level: 'gcse' | 'a_level';
-    client: { email: string; full_name: string | null };
-    subjects: Array<{
-      id: string;
-      subject: string;
-      exam_board: string;
-      current_working_grade: string | null;
-      target_grade: string | null;
-    }>;
-  }>();
+  const groupedMap = new Map<string, GroupedStudent>();
 
   for (const student of students) {
     const currentWorkingGrade =
@@ -71,63 +72,7 @@ export default async function TutorStudentsPage() {
         <AddStudentModal />
       </section>
 
-      {groupedStudents.length === 0 ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>No students yet</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-slate-600">You haven&apos;t added any students yet.</p>
-          </CardContent>
-        </Card>
-      ) : (
-        <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {groupedStudents.map((student) => (
-            <Card key={`${student.client.email}:${student.student_name}:${student.level}`} className="h-full">
-              <CardHeader>
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <CardTitle>{student.student_name}</CardTitle>
-                    <p className="mt-1 text-sm font-medium text-blue-700">
-                      {student.level === 'a_level' ? 'A-Level' : 'GCSE'} · {student.subjects.length}{' '}
-                      {student.subjects.length === 1 ? 'Subject' : 'Subjects'}
-                    </p>
-                  </div>
-                  <StudentDetailsModal
-                    studentName={student.student_name}
-                    level={student.level}
-                    clientEmail={student.client.email}
-                    clientFullName={student.client.full_name}
-                    subjects={student.subjects}
-                  />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <dl className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between gap-4">
-                    <dt className="text-slate-500">Client Email</dt>
-                    <dd className="font-medium text-slate-900">{student.client.email}</dd>
-                  </div>
-                  <div className="flex items-center justify-between gap-4">
-                    <dt className="text-slate-500">Client Name</dt>
-                    <dd className="font-medium text-slate-900">{student.client.full_name ?? '-'}</dd>
-                  </div>
-                  <div className="flex items-center justify-between gap-4">
-                    <dt className="text-slate-500">Subjects</dt>
-                    <dd className="font-medium text-slate-900">
-                      {student.subjects.map((item) => item.subject).join(', ')}
-                    </dd>
-                  </div>
-                  <div className="flex items-center justify-between gap-4">
-                    <dt className="text-slate-500">Details</dt>
-                    <dd className="font-medium text-blue-700">Open View Details</dd>
-                  </div>
-                </dl>
-              </CardContent>
-            </Card>
-          ))}
-        </section>
-      )}
+      <StudentsRoster students={groupedStudents} />
     </main>
   );
 }

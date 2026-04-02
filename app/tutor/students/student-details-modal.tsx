@@ -44,7 +44,7 @@ export function StudentDetailsModal({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">View Details</Button>
+        <Button variant="outline" className='bg-green-200 text-black border-green-400 shadow-sm shadow-green-500 hover:text-slate-700 hover:bg-green-300'>View Details</Button>
       </DialogTrigger>
       <DialogContent className="max-h-[85vh] overflow-y-auto">
         <DialogTitle className="text-lg font-semibold text-slate-900 sm:text-xl">
