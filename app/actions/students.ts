@@ -100,7 +100,7 @@ export async function addClientProfile(input: AddClientProfileInput) {
   const { data: clientProfile, error: clientLookupError } = await supabase
     .from('profiles')
     .select('id, role')
-    .eq('email', normalizedEmail)
+    .ilike('email', normalizedEmail)
     .eq('role', 'client')
     .maybeSingle();
 
@@ -139,7 +139,13 @@ export async function addClientProfile(input: AddClientProfileInput) {
   return { ok: true, created: rows.length };
 }
 
-export async function deleteClientProfile(clientProfileId: string) {
+type DeleteStudentInput = {
+  clientId: string;
+  studentName: string;
+  level: 'gcse' | 'a_level';
+};
+
+export async function deleteClientProfile({ clientId, studentName, level }: DeleteStudentInput) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -149,10 +155,16 @@ export async function deleteClientProfile(clientProfileId: string) {
     return { ok: false, error: 'You must be logged in.' };
   }
 
+  if (!clientId || !studentName || !level) {
+    return { ok: false, error: 'Student details are required.' };
+  }
+
   const { error } = await supabase
     .from('client_profiles')
     .delete()
-    .eq('id', clientProfileId)
+    .eq('client_id', clientId)
+    .eq('student_name', studentName)
+    .eq('level', level)
     .eq('tutor_id', user.id);
 
   if (error) {

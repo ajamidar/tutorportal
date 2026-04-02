@@ -325,9 +325,6 @@ export default async function TutorSchedulePage({ searchParams }: TutorScheduleP
                   {session.subject ? (
                     <p className="mt-1 text-xs font-medium text-blue-700">{session.subject}</p>
                   ) : null}
-                  {session.student?.target_grade ? (
-                    <p className="mt-1 text-xs text-slate-600">Target {session.student.target_grade}</p>
-                  ) : null}
                 </article>
               ))}
             </div>

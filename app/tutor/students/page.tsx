@@ -3,6 +3,7 @@ import { AddStudentModal } from './add-student-modal';
 import { StudentsRoster } from './students-roster';
 
 type GroupedStudent = {
+  client_id: string;
   student_name: string;
   level: 'gcse' | 'a_level';
   client: { email: string; full_name: string | null };
@@ -32,6 +33,7 @@ export default async function TutorStudentsPage() {
 
     if (!current) {
       groupedMap.set(key, {
+        client_id: student.client_id,
         student_name: student.student_name,
         level: student.level,
         client: student.client,

@@ -20,6 +20,7 @@ type SubjectEntry = {
 };
 
 type StudentDetailsModalProps = {
+  clientId: string;
   studentName: string;
   level: 'gcse' | 'a_level';
   clientEmail: string;
@@ -33,6 +34,7 @@ function gradeDisplay(value: string | number | null) {
 }
 
 export function StudentDetailsModal({
+  clientId,
   studentName,
   level,
   clientEmail,
@@ -66,12 +68,11 @@ export function StudentDetailsModal({
           <div className="space-y-3">
             {subjects.map((entry) => (
               <article key={entry.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-                <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
                   <div>
                     <p className="text-sm font-semibold text-slate-900">{entry.subject}</p>
                     <p className="mt-1 text-sm text-slate-600">Exam Board: {entry.exam_board}</p>
                   </div>
-                  <DeleteStudentButton id={entry.id} label={`${studentName} - ${entry.subject}`} />
                 </div>
 
                 <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
@@ -80,6 +81,15 @@ export function StudentDetailsModal({
                 </div>
               </article>
             ))}
+          </div>
+
+          <div className="flex justify-end border-t border-slate-200 pt-4">
+            <DeleteStudentButton
+              clientId={clientId}
+              studentName={studentName}
+              level={level}
+              label={`${studentName} (${level === 'a_level' ? 'A-Level' : 'GCSE'})`}
+            />
           </div>
         </div>
       </DialogContent>

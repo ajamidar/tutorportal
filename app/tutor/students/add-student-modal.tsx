@@ -160,10 +160,10 @@ export function AddStudentModal() {
           <div className="space-y-3 rounded-2xl border border-slate-200 bg-gradient-to-b from-slate-50 to-white p-3 shadow-sm sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <Label>Subjects</Label>
+                <Label className='font-bold'>Subjects</Label>
                 <p className="text-xs text-slate-500">Add one or more subjects for this student.</p>
               </div>
-              <Button type="button" variant="outline" onClick={addRow}>
+              <Button type="button" variant="outline" className='text-black bg-green-300 border-green-400 shadow-sm shadow-green-500 hover:bg-green-200 hover:text-black' onClick={addRow}>
                 Add Subject
               </Button>
             </div>

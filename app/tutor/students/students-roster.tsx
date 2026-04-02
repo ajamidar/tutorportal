@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { StudentDetailsModal } from './student-details-modal';
+import { DeleteStudentButton } from './delete-student-button';
 
 type SubjectEntry = {
   id: string;
@@ -14,6 +15,7 @@ type SubjectEntry = {
 };
 
 type GroupedStudent = {
+  client_id: string;
   student_name: string;
   level: 'gcse' | 'a_level';
   client: { email: string; full_name: string | null };
@@ -172,6 +174,7 @@ export function StudentsRoster({ students }: StudentsRosterProps) {
                     </p>
                   </div>
                   <StudentDetailsModal
+                    clientId={student.client_id}
                     studentName={student.student_name}
                     level={student.level}
                     clientEmail={student.client.email}
@@ -197,6 +200,15 @@ export function StudentsRoster({ students }: StudentsRosterProps) {
                     </dd>
                   </div>
                 </dl>
+
+                <div className="mt-4 flex flex-wrap justify-end gap-2 border-t border-slate-200 pt-4">
+                  <DeleteStudentButton
+                    clientId={student.client_id}
+                    studentName={student.student_name}
+                    level={student.level}
+                    label={`${student.student_name} (${student.level === 'a_level' ? 'A-Level' : 'GCSE'})`}
+                  />
+                </div>
               </CardContent>
             </Card>
           ))}

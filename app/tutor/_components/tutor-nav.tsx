@@ -8,6 +8,7 @@ const navItems = [
   { href: '/tutor/dashboard', label: 'Dashboard' },
   { href: '/tutor/students', label: 'My Students' },
   { href: '/tutor/schedule', label: 'Schedule' },
+  { href: '/tutor/assignments', label: 'Assignments' },
   { href: '/tutor/billing', label: 'Billing' },
   { href: '/tutor/profile', label: 'Profile' },
 ];
