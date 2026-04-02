@@ -72,7 +72,7 @@ export function PortalNav({ mobile = false }: PortalNavProps) {
                 href={item.href}
                 className={cn(
                   'flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-colors',
-                  isActive ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                  isActive ? 'bg-blue-500 border-blue-600 text-white shadow-md shadow-blue-700' : 'text-slate-600 hover:text-slate-900 border-slate-200 shadow-sm shadow-slate-300 hover:bg-slate-200'
                 )}
                 aria-current={isActive ? 'page' : undefined}
               >

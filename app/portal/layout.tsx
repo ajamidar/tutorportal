@@ -10,7 +10,7 @@ export default function PortalLayout({ children }: { children: ReactNode }) {
         <div className="mx-auto flex w-full max-w-4xl items-center justify-between px-4 py-3 sm:gap-6 sm:px-6">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <h1 className="truncate text-base font-semibold tracking-tight text-slate-900 sm:text-lg">
-              Parent Portal
+              Student Portal
             </h1>
           </div>
 
@@ -19,7 +19,7 @@ export default function PortalLayout({ children }: { children: ReactNode }) {
           </div>
 
           <form action={signOutClientAction}>
-            <Button type="submit" variant="outline" className="h-9 rounded-xl px-3 text-xs sm:text-sm">
+            <Button type="submit" variant="outline" className="h-9 rounded-xl px-3 text-xs sm:text-sm bg-red-500 border-red-600 hover:border-red-600 shadow-sm shadow-red-700 text-white hover:bg-red-400 hover:text-white">
               Sign Out
             </Button>
           </form>
