@@ -3,6 +3,7 @@ import { TutorNav } from './_components/tutor-nav';
 import { signOutTutorAction } from './actions';
 import { Button } from '@/components/ui/button';
 import { Toaster } from 'sonner';
+import { LogOut } from 'lucide-react';
 
 export default function TutorLayout({ children }: { children: ReactNode }) {
   return (
@@ -15,19 +16,24 @@ export default function TutorLayout({ children }: { children: ReactNode }) {
             </h1>
             <form action={signOutTutorAction} className="md:hidden">
               <Button type="submit" variant="outline" className='bg-red-500 text-white hover:bg-red-600 hover:text-white rounded-2xl '>
-                Sign Out
+                <LogOut className='mr-0.5 h-4 w-4'/>Sign Out
               </Button>
             </form>
           </div>
-          <TutorNav />
+          <div className="hidden md:block">
+            <TutorNav />
+          </div>
           <form action={signOutTutorAction} className="hidden md:block">
             <Button type="submit" variant="outline" className='bg-red-500 text-white hover:bg-red-600 hover:text-white rounded-2xl'>
-              Sign Out
+              <LogOut className='mr-1 h-5 w-5'/>Sign Out
             </Button>
           </form>
         </div>
       </header>
-      <div className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 sm:py-6">{children}</div>
+      <div className="mx-auto w-full max-w-7xl px-4 pb-24 pt-5 sm:px-6 sm:pb-6 md:pb-6">{children}</div>
+      <div className="md:hidden">
+        <TutorNav mobile />
+      </div>
       <Toaster richColors position="top-right" />
     </div>
   );

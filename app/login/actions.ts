@@ -3,6 +3,10 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '../../utils/supabase/server';
 
+function getAppBaseUrl() {
+  return process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+}
+
 function getSafeRole(value: FormDataEntryValue | null): 'tutor' | 'client' {
   return value === 'tutor' ? 'tutor' : 'client';
 }
@@ -101,4 +105,25 @@ export async function signUpAction(formData: FormData) {
   }
 
   redirect(role === 'tutor' ? '/tutor/dashboard' : '/portal/dashboard');
+}
+
+export async function sendPasswordResetAction(formData: FormData) {
+  const email = String(formData.get('email') ?? '').trim();
+
+  if (!email) {
+    redirect('/login?mode=reset&error=Email+is+required');
+  }
+
+  const supabase = await createClient();
+  const redirectTo = `${getAppBaseUrl()}/login/reset-password`;
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo,
+  });
+
+  if (error) {
+    redirect(`/login?mode=reset&error=${encodeURIComponent(error.message)}`);
+  }
+
+  redirect('/login?mode=reset&sent=1');
 }

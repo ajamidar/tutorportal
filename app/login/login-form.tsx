@@ -1,10 +1,12 @@
 'use client';
 
 import { FormEvent, useMemo, useState } from 'react';
-import { signInAction, signUpAction } from './actions';
+import { sendPasswordResetAction, signInAction, signUpAction } from './actions';
 
 type LoginFormProps = {
   error?: string;
+  initialMode?: 'signin' | 'signup' | 'reset';
+  resetSent?: boolean;
 };
 
 const STRENGTH_LEVELS = ['Very weak', 'Weak', 'Fair', 'Strong', 'Very strong'] as const;
@@ -30,8 +32,8 @@ function getStrengthColor(score: number): string {
   return 'bg-emerald-500';
 }
 
-export default function LoginForm({ error }: LoginFormProps) {
-  const [mode, setMode] = useState<'signin' | 'signup'>('signin');
+export default function LoginForm({ error, initialMode = 'signin', resetSent = false }: LoginFormProps) {
+  const [mode, setMode] = useState<'signin' | 'signup' | 'reset'>(initialMode);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -43,7 +45,7 @@ export default function LoginForm({ error }: LoginFormProps) {
 
   const activeError = localError ?? error;
 
-  function handleModeChange(nextMode: 'signin' | 'signup') {
+  function handleModeChange(nextMode: 'signin' | 'signup' | 'reset') {
     setMode(nextMode);
     setLocalError(null);
     setPassword('');
@@ -53,7 +55,7 @@ export default function LoginForm({ error }: LoginFormProps) {
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    if (mode !== 'signup') {
+    if (mode === 'signin' || mode === 'reset') {
       setLocalError(null);
       return;
     }
@@ -83,10 +85,14 @@ export default function LoginForm({ error }: LoginFormProps) {
           <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">TutorPortal</h1>
         </div>
         <p className="mt-1 text-sm text-slate-600">
-          {mode === 'signin' ? 'Sign in to your account' : 'Create your account'}
+          {mode === 'signin'
+            ? 'Sign in to your account'
+            : mode === 'signup'
+              ? 'Create your account'
+              : 'Reset your password'}
         </p>
 
-        <div className="mt-4 grid grid-cols-2 gap-2 rounded-xl border border-slate-200 bg-slate-50 p-1">
+        <div className="mt-4 grid grid-cols-3 gap-2 rounded-xl border border-slate-200 bg-slate-50 p-1">
           <button
             type="button"
             onClick={() => handleModeChange('signin')}
@@ -109,7 +115,24 @@ export default function LoginForm({ error }: LoginFormProps) {
           >
             Sign Up
           </button>
+          <button
+            type="button"
+            onClick={() => handleModeChange('reset')}
+            className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
+              mode === 'reset'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            Reset
+          </button>
         </div>
+
+        {resetSent ? (
+          <p className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+            If the email exists, a password reset link has been sent.
+          </p>
+        ) : null}
 
         {activeError ? (
           <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
@@ -118,7 +141,7 @@ export default function LoginForm({ error }: LoginFormProps) {
         ) : null}
 
         <form
-          action={mode === 'signin' ? signInAction : signUpAction}
+          action={mode === 'signin' ? signInAction : mode === 'signup' ? signUpAction : sendPasswordResetAction}
           onSubmit={handleSubmit}
           className="mt-5 space-y-4"
         >
@@ -136,34 +159,36 @@ export default function LoginForm({ error }: LoginFormProps) {
             />
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium text-slate-800">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                required
-                value={password}
-                onChange={(event) => {
-                  setPassword(event.target.value);
-                  if (localError) setLocalError(null);
-                }}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 pr-20 text-sm outline-none ring-0 transition placeholder:text-slate-400 focus:border-blue-400"
-                placeholder="Your password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((current) => !current)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? 'Hide' : 'Show'}
-              </button>
+          {mode !== 'reset' ? (
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-sm font-medium text-slate-800">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={(event) => {
+                    setPassword(event.target.value);
+                    if (localError) setLocalError(null);
+                  }}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 pr-20 text-sm outline-none ring-0 transition placeholder:text-slate-400 focus:border-blue-400"
+                  placeholder="Your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((current) => !current)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
             </div>
-          </div>
+          ) : null}
 
           {mode === 'signup' ? (
             <>
@@ -242,11 +267,27 @@ export default function LoginForm({ error }: LoginFormProps) {
             </>
           ) : null}
 
+          {mode === 'signin' ? (
+            <button
+              type="button"
+              onClick={() => handleModeChange('reset')}
+              className="text-left text-sm font-medium text-blue-700 transition hover:text-blue-600"
+            >
+              Forgot password?
+            </button>
+          ) : null}
+
+          {mode === 'reset' ? (
+            <p className="text-sm text-slate-600">
+              Enter your email address and we’ll send a link to create a new password.
+            </p>
+          ) : null}
+
           <button
             type="submit"
             className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-500"
           >
-            {mode === 'signin' ? 'Sign In' : 'Create Account'}
+            {mode === 'signin' ? 'Sign In' : mode === 'signup' ? 'Create Account' : 'Send Reset Link'}
           </button>
         </form>
       </div>

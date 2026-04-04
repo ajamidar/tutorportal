@@ -1,11 +1,14 @@
 import Link from 'next/link';
 import { getTutorSessions } from '@/app/actions/sessions';
 import { getTutorStudents } from '@/app/actions/students';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookSessionModal } from './book-session-modal';
+import { ManageSessionActions } from './manage-session-actions';
+import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
 type TutorSchedulePageProps = {
-  searchParams: Promise<{ year?: string; month?: string; day?: string }>;
+  searchParams: Promise<{ year?: string; month?: string; day?: string; view?: string }>;
 };
 
 type DayCell = {
@@ -61,6 +64,10 @@ function toQueryHref(year: number, month: number, day: number) {
   return `/tutor/schedule?year=${year}&month=${month}&day=${day}`;
 }
 
+function toQueryHrefWithView(year: number, month: number, day: number, view: 'scheduled' | 'cancelled') {
+  return `/tutor/schedule?year=${year}&month=${month}&day=${day}&view=${view}`;
+}
+
 function formatMonthTitle(year: number, month: number) {
   const date = new Date(year, month - 1, 1);
   return date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
@@ -73,6 +80,16 @@ function formatMonthNavLabel(year: number, month: number) {
 
 function formatTime(value: string) {
   return new Date(value).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+}
+
+function formatDateTime(value: string) {
+  return new Date(value).toLocaleString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 }
 
 function isSameDate(left: Date, right: Date) {
@@ -91,11 +108,12 @@ function getAdjacentMonth(year: number, month: number, delta: number) {
 export default async function TutorSchedulePage({ searchParams }: TutorSchedulePageProps) {
   const params = await searchParams;
   const { year, month, day } = parseCalendarState(params);
+  const activeView: 'scheduled' | 'cancelled' = params.view === 'cancelled' ? 'cancelled' : 'scheduled';
 
   const { start: monthStart, end: monthEnd } = toMonthRange(year, month);
 
   const [sessions, students] = await Promise.all([
-    getTutorSessions(monthStart.toISOString(), monthEnd.toISOString()),
+    getTutorSessions(monthStart.toISOString(), monthEnd.toISOString(), activeView),
     getTutorStudents(),
   ]);
 
@@ -170,7 +188,7 @@ export default async function TutorSchedulePage({ searchParams }: TutorScheduleP
   const nextMonth = getAdjacentMonth(year, month, 1);
 
   const now = new Date();
-  const todayHref = toQueryHref(now.getFullYear(), now.getMonth() + 1, now.getDate());
+  const todayHref = toQueryHrefWithView(now.getFullYear(), now.getMonth() + 1, now.getDate(), activeView);
 
   return (
     <Card className='border-slate-300 shadow-md shadow-slate-500'>
@@ -182,22 +200,43 @@ export default async function TutorSchedulePage({ searchParams }: TutorScheduleP
 
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <Link
-              href={toQueryHref(previousMonth.year, previousMonth.month, 1)}
-              className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-400 bg-slate-300 px-3 text-sm font-medium text-black transition hover:border-slate-400 hover:bg-slate-200 "
+              href={toQueryHrefWithView(previousMonth.year, previousMonth.month, 1, activeView)}
+              className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-400 bg-slate-300 px-2 text-sm font-medium text-black transition hover:border-slate-400 hover:bg-slate-400 "
             >
-              {formatMonthNavLabel(previousMonth.year, previousMonth.month)}
+              <ChevronLeft className='h-6 w-6' />
             </Link>
             <Link
               href={todayHref}
-              className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-400 bg-slate-300 px-3 text-sm font-medium text-black transition hover:border-slate-400 hover:bg-slate-200 "
+              className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-400 bg-slate-300 px-3 text-sm font-medium text-black transition hover:border-slate-400 hover:bg-slate-400 "
             >
-              Today
+              This Month
             </Link>
             <Link
-              href={toQueryHref(nextMonth.year, nextMonth.month, 1)}
-              className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-400 bg-slate-300 px-3 text-sm font-medium text-black transition hover:border-slate-400 hover:bg-slate-200"
+              href={toQueryHrefWithView(nextMonth.year, nextMonth.month, 1, activeView)}
+              className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-400 bg-slate-300 px-2 text-sm font-medium text-black transition hover:border-slate-400 hover:bg-slate-400"
             >
-              {formatMonthNavLabel(nextMonth.year, nextMonth.month)}
+              <ChevronRight className='h-6 w-6' />
+            </Link>
+          </div>
+
+          <div className="mt-3 inline-flex rounded-lg border border-slate-300 bg-white p-1">
+            <Link
+              href={toQueryHrefWithView(year, month, selectedDay, 'scheduled')}
+              className={`rounded-md px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.08em] transition ${activeView === 'scheduled'
+                ? 'bg-blue-600 text-white'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                }`}
+            >
+              Scheduled
+            </Link>
+            <Link
+              href={toQueryHrefWithView(year, month, selectedDay, 'cancelled')}
+              className={`rounded-md px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.08em] transition ${activeView === 'cancelled'
+                ? 'bg-amber-600 text-white'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                }`}
+            >
+              Cancelled
             </Link>
           </div>
         </div>
@@ -225,11 +264,12 @@ export default async function TutorSchedulePage({ searchParams }: TutorScheduleP
               className="h-9 w-24 rounded-lg border border-slate-300 bg-white px-2 text-sm text-slate-700"
             />
             <input type="hidden" name="day" value="1" />
+            <input type="hidden" name="view" value={activeView} />
             <button
               type="submit"
               className="inline-flex h-9 items-center justify-center rounded-lg bg-blue-600 px-3 text-sm font-medium text-white transition hover:bg-blue-500"
             >
-              Go
+              Go <ArrowUpRight className='h-5 w-5' />
             </button>
           </form>
         </div>
@@ -264,20 +304,18 @@ export default async function TutorSchedulePage({ searchParams }: TutorScheduleP
               return (
                 <Link
                   key={`${cellYear}-${cellMonth}-${cellDay}`}
-                  href={toQueryHref(cellYear, cellMonth, cellDay)}
-                  className={`rounded-xl border p-2 text-left transition sm:p-2.5 ${
-                    isSelected
-                      ? 'border-slate-700 bg-blue-200 shadow-sm'
-                      : cell.inCurrentMonth
-                        ? 'border-slate-700 bg-white hover:border-blue-200 hover:bg-blue-50/40'
-                        : 'border-slate-300 bg-slate-50 text-slate-400 hover:border-slate-200'
-                  }`}
+                  href={toQueryHrefWithView(cellYear, cellMonth, cellDay, activeView)}
+                  className={`rounded-xl border p-2 text-left transition sm:p-2.5 ${isSelected
+                    ? 'border-slate-700 bg-blue-200 shadow-sm'
+                    : cell.inCurrentMonth
+                      ? 'border-slate-700 bg-white hover:border-blue-200 hover:bg-blue-50/40'
+                      : 'border-slate-300 bg-slate-50 text-slate-400 hover:border-slate-200'
+                    }`}
                 >
                   <div className="flex items-center justify-between">
                     <span
-                      className={`text-sm font-semibold ${
-                        isToday ? 'rounded-full bg-blue-600 px-2 py-0.5 text-white' : 'text-slate-800'
-                      }`}
+                      className={`text-sm font-semibold ${isToday ? 'rounded-full bg-blue-600 px-2 py-0.5 text-white' : 'text-slate-800'
+                        }`}
                     >
                       {cellDay}
                     </span>
@@ -294,36 +332,65 @@ export default async function TutorSchedulePage({ searchParams }: TutorScheduleP
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-md shadow-green-500 hover:shadow-blue-300 hover:cursor-pointer transition">
-          <h4 className="text-sm font-bold text-slate-900">
-            {selectedDate.toLocaleDateString('en-GB', {
-              weekday: 'long',
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            })}
-          </h4>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h4 className="text-sm font-bold text-slate-900">
+              {selectedDate.toLocaleDateString('en-GB', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+              })}
+            </h4>
+            <Badge variant={activeView === 'scheduled' ? 'success' : 'warning'}>
+              {activeView === 'scheduled' ? 'Scheduled View' : 'Cancelled View'}
+            </Badge>
+          </div>
 
           {selectedDaySessions.length === 0 ? (
-            <p className="mt-2 text-sm text-slate-500">No sessions scheduled for this date.</p>
+            <p className="mt-2 text-sm text-slate-500">
+              {activeView === 'scheduled'
+                ? 'No sessions scheduled for this date.'
+                : 'No cancelled lessons for this date.'}
+            </p>
           ) : (
             <div className="mt-3 space-y-2">
               {selectedDaySessions.map((session) => (
-                <article key={session.id} className="rounded-xl border border-green-400 bg-green-300 p-3">
+                <article key={session.id} className="rounded-xl border border-green-200 hover:border-green-400 hover:shadow-sm hover:shadow-green-400 hover:cursor-pointer transition bg-gradient-to-b from-green-100 via-green-50 to-green-100 p-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <p className="text-sm font-semibold text-black">
                       {session.student?.student_name ?? 'Student'}
                     </p>
-                    {session.is_recurring ? (
-                      <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-green-700">
-                        Recurring
-                      </span>
-                    ) : null}
+                    <div className="flex items-center gap-2">
+                      {session.is_recurring ? (
+                        <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-semibold text-green-700">
+                          Recurring
+                        </span>
+                      ) : null}
+                      <Badge variant={session.status === 'cancelled' ? 'warning' : 'success'}>
+                        {session.status === 'cancelled' ? 'Cancelled' : 'Scheduled'}
+                      </Badge>
+                    </div>
                   </div>
                   <p className="mt-1 text-sm text-slate-700">
                     {formatTime(session.start_time)} - {formatTime(session.end_time)}
                   </p>
                   {session.subject ? (
                     <p className="mt-1 text-xs font-medium text-blue-700">{session.subject}</p>
+                  ) : null}
+
+                  {session.status === 'cancelled' && session.cancelled_at ? (
+                    <p className="mt-2 text-xs font-medium text-amber-800">
+                      Cancelled on {formatDateTime(session.cancelled_at)}
+                    </p>
+                  ) : null}
+
+                  {session.status === 'scheduled' ? (
+                    <ManageSessionActions
+                      sessionId={session.id}
+                      studentName={session.student?.student_name ?? 'Student'}
+                      startTime={session.start_time}
+                      endTime={session.end_time}
+                    />
                   ) : null}
                 </article>
               ))}
