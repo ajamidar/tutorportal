@@ -6,7 +6,7 @@ interface Props { t: Tokens; }
 /** "Sound familiar?" section — lists common tutor pain points. Add/edit pains in data.ts. */
 export function PainSection({ t }: Props) {
   return (
-    <section className="relative z-10 px-6 py-20" style={{ background: t.painBg }}>
+    <section className="relative z-10 px-6 !bg-black py-20">
       <div className="mx-auto max-w-5xl">
         <div className="mb-3 text-center" data-animate>
           <span

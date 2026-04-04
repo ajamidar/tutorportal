@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   CalendarDays, BookOpen, CreditCard, ChevronRight, GraduationCap,
   Users, BarChart3, CheckCircle2, Sparkles, ArrowRight, Moon, Sun,
@@ -230,6 +231,24 @@ export default function LandingPageClient() {
         .pain-card{transition:transform .22s,box-shadow .22s;}
         .pain-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(239,68,68,0.12);}
 
+        .section-photo{
+          position:relative;overflow:hidden;border-radius:1.2rem;
+          border:1px solid var(--photo-border);
+          box-shadow:0 20px 52px rgba(15,23,42,0.2);
+          min-height:260px;
+        }
+        .section-photo::after{
+          content:'';position:absolute;inset:0;
+          background:linear-gradient(180deg, rgba(15,23,42,0.04) 35%, rgba(15,23,42,0.55) 100%);
+          pointer-events:none;
+        }
+        .section-photo-caption{
+          position:absolute;left:1rem;right:1rem;bottom:1rem;z-index:1;
+          border-radius:.9rem;padding:.75rem .9rem;
+          background:rgba(15,23,42,0.45);backdrop-filter:blur(8px);
+          color:#fff;font-size:.86rem;line-height:1.3;
+        }
+
         .toggle-btn{transition:background .2s,border-color .2s,color .2s,transform .15s;}
         .toggle-btn:hover{transform:scale(1.08);}
         .cta-link{transition:opacity .15s,transform .15s;}
@@ -367,40 +386,58 @@ export default function LandingPageClient() {
 
         {/* ── PAIN ── */}
         <section className="relative z-10 px-6 py-20" style={{ background: t.painBg }}>
-          <div className="mx-auto max-w-5xl">
-            <div className="mb-3 text-center" data-animate>
-              <span className="inline-block rounded-full border px-4 py-1 text-xs font-bold uppercase tracking-widest"
-                style={{ background: 'rgba(239,68,68,0.1)', borderColor: 'rgba(239,68,68,0.25)', color: '#ef4444' }}>
-                The problem
-              </span>
-            </div>
-            <h2 className="mb-4 text-center text-3xl font-bold sm:text-4xl" data-animate style={{ color: t.painHeadline }}>
-              Sound familiar?
-            </h2>
-            <p className="mx-auto mb-12 max-w-xl text-center" data-animate style={{ color: t.painText }}>
-              You became a tutor to teach — not to manage a business. But without the right tools, admin takes over.
-            </p>
-            <div className="grid gap-5 sm:grid-cols-2">
-              {PAIN_POINTS.map((p, i) => (
-                <div key={p.title} data-animate data-delay={String(i + 1)}
-                  className="pain-card flex gap-5 rounded-2xl border p-6"
-                  style={{ background: t.painCardBg, borderColor: t.painCardBorder }}>
-                  <div className="mt-0.5 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
-                    style={{ background: `${p.color}18`, color: p.color }}>
-                    {p.icon}
-                  </div>
-                  <div>
-                    <h3 className="mb-1.5 font-semibold" style={{ color: p.color }}>{p.title}</h3>
-                    <p className="text-sm leading-relaxed" style={{ color: t.painText }}>{p.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-14 text-center" data-animate>
-              <p className="text-2xl font-bold sm:text-3xl" style={{ color: t.painHeadline }}>
-                TutorPortal handles all of it.
+          <div
+            className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.1fr_0.9fr]"
+            style={{ '--photo-border': t.cardHoverBorder } as React.CSSProperties}
+          >
+            <div>
+              <div className="mb-3 text-center lg:text-left" data-animate>
+                <span className="inline-block rounded-full border px-4 py-1 text-xs font-bold uppercase tracking-widest"
+                  style={{ background: 'rgba(239,68,68,0.1)', borderColor: 'rgba(239,68,68,0.25)', color: '#ef4444' }}>
+                  The problem
+                </span>
+              </div>
+              <h2 className="mb-4 text-center text-3xl font-bold sm:text-4xl lg:text-left" data-animate style={{ color: t.painHeadline }}>
+                Sound familiar?
+              </h2>
+              <p className="mx-auto mb-12 max-w-xl text-center lg:mx-0 lg:max-w-none lg:text-left" data-animate style={{ color: t.painText }}>
+                You became a tutor to teach — not to manage a business. But without the right tools, admin takes over.
               </p>
-              <p className="mt-2" style={{ color: t.painText }}>One platform. Every tool your tutoring business needs.</p>
+              <div className="grid gap-5 sm:grid-cols-2">
+                {PAIN_POINTS.map((p, i) => (
+                  <div key={p.title} data-animate data-delay={String(i + 1)}
+                    className="pain-card flex gap-5 rounded-2xl border p-6"
+                    style={{ background: t.painCardBg, borderColor: t.painCardBorder }}>
+                    <div className="mt-0.5 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
+                      style={{ background: `${p.color}18`, color: p.color }}>
+                      {p.icon}
+                    </div>
+                    <div>
+                      <h3 className="mb-1.5 font-semibold" style={{ color: p.color }}>{p.title}</h3>
+                      <p className="text-sm leading-relaxed" style={{ color: t.painText }}>{p.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-14 text-center lg:text-left" data-animate>
+                <p className="text-2xl font-bold sm:text-3xl" style={{ color: t.painHeadline }}>
+                  TutorPortal handles all of it.
+                </p>
+                <p className="mt-2" style={{ color: t.painText }}>One platform. Every tool your tutoring business needs.</p>
+              </div>
+            </div>
+
+            <div data-animate data-dir="right" className="section-photo h-[280px] sm:h-[340px] lg:sticky lg:top-24 lg:h-[520px]">
+              <Image
+                src="/landing1.jpg"
+                alt="Tutor and student reviewing study progress"
+                fill
+                sizes="(max-width: 1024px) 100vw, 42vw"
+                className="object-cover"
+              />
+              <div className="section-photo-caption">
+                Less message chaos. More structured learning.
+              </div>
             </div>
           </div>
         </section>
@@ -454,30 +491,48 @@ export default function LandingPageClient() {
 
         {/* ── HOW IT WORKS ── */}
         <section className="relative z-10 px-6 py-20" style={{ background: t.painBg }}>
-          <div className="mx-auto max-w-2xl">
-            <div className="mb-14 text-center" data-animate>
-              <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: t.sectionLabel }}>Get up and running</p>
-              <h2 className="mt-2 text-3xl font-bold sm:text-4xl" style={{ color: t.sectionH2 }}>Ready in minutes</h2>
-              <p className="mt-3" style={{ color: t.sectionP }}>No setup headaches. You can have your first session booked within the hour.</p>
+          <div
+            className="mx-auto grid max-w-6xl items-start gap-10 lg:grid-cols-[0.9fr_1.1fr]"
+            style={{ '--photo-border': t.cardHoverBorder } as React.CSSProperties}
+          >
+            <div data-animate data-dir="left" className="section-photo h-[280px] sm:h-[360px] lg:h-[520px]">
+              <Image
+                src="/landing2.jpg"
+                alt="Tutor planning a student learning schedule"
+                fill
+                sizes="(max-width: 1024px) 100vw, 40vw"
+                className="object-cover"
+              />
+              <div className="section-photo-caption">
+                Plan weeks ahead, then run lessons without admin friction.
+              </div>
             </div>
-            {/* Timeline */}
-            <div className="relative">
-              {STEPS.map((item, i) => (
-                <div key={item.step} data-animate data-delay={String(i + 1)}
-                  className="relative flex gap-6 pb-10 last:pb-0">
-                  {i < STEPS.length - 1 && (
-                    <div className="absolute left-6 top-14 bottom-0 w-px" style={{ background: t.stepLine }} />
-                  )}
-                  <div className="relative shrink-0 flex h-12 w-12 items-center justify-center rounded-2xl text-base font-black text-white"
-                    style={{ background: t.stepNum, boxShadow: t.stepNumShadow }}>
-                    {item.step}
+
+            <div>
+              <div className="mb-14 text-center lg:text-left" data-animate>
+                <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: t.sectionLabel }}>Get up and running</p>
+                <h2 className="mt-2 text-3xl font-bold sm:text-4xl" style={{ color: t.sectionH2 }}>Ready in minutes</h2>
+                <p className="mt-3" style={{ color: t.sectionP }}>No setup headaches. You can have your first session booked within the hour.</p>
+              </div>
+              {/* Timeline */}
+              <div className="relative">
+                {STEPS.map((item, i) => (
+                  <div key={item.step} data-animate data-delay={String(i + 1)}
+                    className="relative flex gap-6 pb-10 last:pb-0">
+                    {i < STEPS.length - 1 && (
+                      <div className="absolute left-6 top-14 bottom-0 w-px" style={{ background: t.stepLine }} />
+                    )}
+                    <div className="relative shrink-0 flex h-12 w-12 items-center justify-center rounded-2xl text-base font-black text-white"
+                      style={{ background: t.stepNum, boxShadow: t.stepNumShadow }}>
+                      {item.step}
+                    </div>
+                    <div className="pt-1.5">
+                      <h3 className="mb-1.5 font-semibold" style={{ color: t.stepTitle }}>{item.title}</h3>
+                      <p className="text-sm leading-relaxed" style={{ color: t.stepDesc }}>{item.desc}</p>
+                    </div>
                   </div>
-                  <div className="pt-1.5">
-                    <h3 className="mb-1.5 font-semibold" style={{ color: t.stepTitle }}>{item.title}</h3>
-                    <p className="text-sm leading-relaxed" style={{ color: t.stepDesc }}>{item.desc}</p>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </section>

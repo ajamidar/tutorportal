@@ -17,17 +17,17 @@ interface Props {
  * To swap the hero image, replace /public/hero-bg.jpg.
  */
 export function HeroSection({ t, dark }: Props) {
-  const [typed,    setTyped]    = useState('');
+  const [typed, setTyped] = useState('');
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     let id: ReturnType<typeof setTimeout>;
     if (!deleting) {
       if (typed.length < TYPED_WORD.length) id = setTimeout(() => setTyped(TYPED_WORD.slice(0, typed.length + 1)), 110);
-      else                                   id = setTimeout(() => setDeleting(true), 2200);
+      else id = setTimeout(() => setDeleting(true), 2200);
     } else {
       if (typed.length > 0) id = setTimeout(() => setTyped(typed.slice(0, -1)), 65);
-      else                   id = setTimeout(() => setDeleting(false), 400);
+      else id = setTimeout(() => setDeleting(false), 400);
     }
     return () => clearTimeout(id);
   }, [typed, deleting]);
