@@ -29,10 +29,10 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
-  const isAuthRoute = pathname === '/login';
+  const isPublicRoute = pathname === '/login' || pathname === '/';
   const isPublicFile = pathname.includes('.') || pathname.startsWith('/_next');
 
-  if (!user && !isAuthRoute && !isPublicFile) {
+  if (!user && !isPublicRoute && !isPublicFile) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     url.searchParams.set('next', pathname);
@@ -70,7 +70,7 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    if (isAuthRoute || isRoleRoot) {
+    if (isPublicRoute || isRoleRoot) {
       const url = request.nextUrl.clone();
       url.pathname = roleHome;
       url.search = '';

@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { UserRoundCheck } from 'lucide-react';
 
 type StudentOption = {
   studentKey: string;
@@ -91,10 +92,10 @@ export function BookSessionModal({ students }: BookSessionModalProps) {
       }}
     >
       <DialogTrigger asChild>
-        <Button disabled={!hasStudents}>Book Session</Button>
+        <Button disabled={!hasStudents}>Book Session <UserRoundCheck className='h-5 w-5 ml-1 mb-0.5' /></Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle className="text-lg font-semibold text-slate-900 sm:text-xl">Book Session</DialogTitle>
+        <DialogTitle className="text-lg font-semibold text-slate-900 sm:text-xl">Book Session <UserRoundCheck className='h-5 w-5 ml-1 mb-0.5' /></DialogTitle>
         <DialogDescription className="sr-only">
           Create a one-off or recurring tutoring session for a selected student.
         </DialogDescription>
