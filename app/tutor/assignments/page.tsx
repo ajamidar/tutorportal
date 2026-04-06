@@ -3,6 +3,7 @@ import { getTutorStudents } from '@/app/actions/students';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CreateAssignmentModal } from './create-assignment-modal';
+import { ViewSubmissionsModal } from './view-submissions-modal';
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString('en-GB', {
@@ -100,14 +101,17 @@ export default async function TutorAssignmentsPage() {
                           <Badge variant={status.variant}>{status.label}</Badge>
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <a
-                            href={assignment.resource_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all duration-150 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
-                          >
-                            Download File
-                          </a>
+                          <div className="flex justify-end gap-2">
+                            <a
+                              href={assignment.resource_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all duration-150 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+                            >
+                              Download File
+                            </a>
+                            <ViewSubmissionsModal assignmentId={assignment.id} assignmentTitle={assignment.title} />
+                          </div>
                         </td>
                       </tr>
                     );
