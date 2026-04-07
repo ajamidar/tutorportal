@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { signOutClientAction } from './actions';
 import { PortalNav } from './_components/portal-nav';
+import { LogInIcon } from 'lucide-react';
 
 export default function PortalLayout({ children }: { children: ReactNode }) {
   return (
@@ -20,6 +21,7 @@ export default function PortalLayout({ children }: { children: ReactNode }) {
 
           <form action={signOutClientAction}>
             <Button type="submit" variant="outline" className="h-9 rounded-xl px-3 text-xs sm:text-sm bg-red-500 border-red-600 hover:border-red-600 shadow-sm shadow-red-700 text-white hover:bg-red-400 hover:text-white">
+            <LogInIcon className="h-4 w-4 mr-1" />
               Sign Out
             </Button>
           </form>

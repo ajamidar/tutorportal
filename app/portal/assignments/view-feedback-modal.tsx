@@ -36,7 +36,7 @@ export function ViewFeedbackModal({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="h-8 px-3 text-xs">
+        <Button variant="outline" className="inline-flex h-9 border-slate-600 shadow-sm shadow-slate-700 bg-slate-500 text-white hover:text-white items-center justify-center rounded-xl px-3 text-sm font-medium transition hover:bg-opacity-75">
           View Feedback
         </Button>
       </DialogTrigger>
