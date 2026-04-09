@@ -49,7 +49,7 @@ export function ProgressTracker({
 
 
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-cyan-50 p-5 shadow-sm sm:p-6">
+    <section className="relative overflow-hidden rounded-3xl border border-emerald-200 shadow-emerald-300 bg-gradient-to-br from-emerald-50 via-emerald-50 to-emerald-100 p-5 shadow-sm sm:p-6">
       <div className="pointer-events-none absolute -right-8 -top-12 h-28 w-28 rounded-full bg-blue-100/50 blur-2xl" />
       <div className="pointer-events-none absolute -bottom-10 -left-8 h-24 w-24 rounded-full bg-emerald-100/70 blur-2xl" />
 
@@ -61,17 +61,17 @@ export function ProgressTracker({
         <p className="mt-1 text-sm text-slate-600">Tracking for {monthLabel}</p>
 
         <div className="mt-4 grid grid-cols-2 gap-3">
-          <div className="rounded-2xl border border-slate-200 bg-white/90 p-3">
+          <div className="rounded-2xl border border-slate-200 shadow-sm shadow-slate-300 bg-white/90 p-3">
             <p className="text-xs uppercase tracking-wide text-slate-500">Lessons Completed</p>
             <p className="mt-1 text-xl font-semibold text-slate-900">{safeCompletedLessons}</p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white/90 p-3">
+          <div className="rounded-2xl border border-slate-200 shadow-sm shadow-slate-300 bg-white/90 p-3">
             <p className="text-xs uppercase tracking-wide text-slate-500">Homework Submitted</p>
             <p className="mt-1 text-xl font-semibold text-slate-900">{safeSubmittedHomework}</p>
           </div>
         </div>
 
-        <div className="mt-5 rounded-2xl border border-slate-200 bg-white/90 p-4">
+        <div className="mt-5 rounded-2xl border border-slate-200 shadow-sm shadow-slate-300 bg-white/90 p-4">
           <div className="flex items-center justify-between gap-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Current milestone</p>
             <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">

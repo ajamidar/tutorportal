@@ -33,7 +33,7 @@ export function SubmitAssignmentModal({ assignmentId, hasSubmitted }: SubmitAssi
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          className={`inline-flex h-9 items-center justify-center ${hasSubmitted ? 'bg-green-500 text-white border-green-500 shadow-sm shadow-green-600' : 'bg-red-500 text-white border-red-500 shadow-sm shadow-red-600'} rounded-xl px-3 text-sm font-medium transition hover:bg-opacity-75 `}
+          className={`inline-flex h-9 items-center justify-center ${hasSubmitted ? 'bg-green-500 text-white border-green-600 shadow-sm shadow-green-700' : 'bg-red-500 text-white border-red-500 shadow-sm shadow-red-600'} rounded-xl px-3 text-sm font-medium transition hover:bg-opacity-75 `}
         >
           {hasSubmitted ? 'Resubmit Work' : 'Submit Work'}
         </Button>

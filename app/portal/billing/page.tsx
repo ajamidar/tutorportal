@@ -33,7 +33,7 @@ export default async function PortalBillingPage() {
 
   return (
     <main className="space-y-4">
-      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <section className="rounded-3xl border border-green-300 shadow-green-400 bg-gradient-to-br from-green-50/80 via-green-50/50 to-green-50/80 p-5 shadow-sm sm:p-6">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">Billing</p>
         <h1 className="mt-2 text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
           Payments
@@ -49,7 +49,7 @@ export default async function PortalBillingPage() {
               const status = getStatusPresentation(invoice.status);
 
               return (
-                <article key={invoice.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <article key={invoice.id} className="rounded-2xl border border-orange-200 shadow-sm shadow-orange-300 bg-orange-50 p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-semibold text-slate-900 sm:text-base">

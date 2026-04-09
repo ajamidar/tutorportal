@@ -6,6 +6,8 @@ import { Toaster } from 'sonner';
 import { LogOut } from 'lucide-react';
 
 export default function TutorLayout({ children }: { children: ReactNode }) {
+  const currentYear = new Date().getFullYear();
+
   return (
     <div className="min-h-screen bg-transparent">
       <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
@@ -31,6 +33,12 @@ export default function TutorLayout({ children }: { children: ReactNode }) {
         </div>
       </header>
       <div className="mx-auto w-full max-w-7xl px-4 pb-24 pt-5 sm:px-6 sm:pb-6 md:pb-6">{children}</div>
+      <footer className="border-t border-slate-200/80 bg-white/90 pb-20 pt-5 text-xs text-slate-600 sm:pb-5 sm:text-sm">
+        <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-1 px-4 text-center sm:flex-row sm:gap-2 sm:px-6 sm:text-left">
+          <p>© {currentYear} TutorPortal. All rights reserved.</p>
+          <p>Built for independent tutors to manage lessons, students, and billing.</p>
+        </div>
+      </footer>
       <div className="md:hidden">
         <TutorNav mobile />
       </div>

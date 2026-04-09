@@ -5,6 +5,7 @@ import type { ClientAssignmentWithSubmission } from '@/app/actions/assignments';
 import { Badge } from '@/components/ui/badge';
 import { SubmitAssignmentModal } from './submit-assignment-modal';
 import { ViewFeedbackModal } from './view-feedback-modal';
+import { FilterIcon } from 'lucide-react';
 
 type AssignmentStatusFilter = 'all' | 'pending' | 'submitted' | 'marked';
 
@@ -67,9 +68,9 @@ export function PortalAssignmentsList({ assignments }: PortalAssignmentsListProp
 
   return (
     <div className="mt-4 space-y-3">
-      <div className="rounded-2xl border border-slate-200 bg-white/70 p-2">
+      <div className="rounded-2xl border border-slate-300 bg-white/70 p-2">
         <p className="px-2 pb-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-600">
-          Filter by status
+          <FilterIcon className="mr-1 mb-1 inline-block h-4 w-4" />Filter by Status
         </p>
         <div className="flex gap-2 overflow-x-auto pb-1">
           {FILTERS.map((filter) => {

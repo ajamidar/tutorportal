@@ -116,7 +116,7 @@ export default async function PortalDashboardPage() {
         monthLabel={overview.monthlyProgressLabel}
       />
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <section className="rounded-3xl border border-yellow-200 shadow-sm shadow-yellow-300 bg-gradient-to-br from-yellow-100 via-yellow-50 to-yellow-100 p-5 sm:p-6">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-base font-semibold text-slate-900 sm:text-lg">Action Needed</h2>
           <span className="text-xs font-medium text-slate-500">This week</span>
@@ -144,16 +144,16 @@ export default async function PortalDashboardPage() {
           )}
 
           {overview.pendingAssignmentCount > 0 && (
-            <div className="rounded-2xl border border-blue-200 bg-blue-50 p-4">
-              <p className="text-sm font-semibold text-blue-900">Homework pending</p>
-              <p className="mt-1 text-sm text-blue-800">
+            <div className="rounded-2xl border border-red-200 shadow-sm shadow-red-300 bg-red-100 p-4">
+              <p className="text-sm font-semibold text-red-900">Homework pending</p>
+              <p className="mt-1 text-sm text-red-800">
                 {overview.pendingAssignmentCount} assignment
                 {overview.pendingAssignmentCount === 1 ? '' : 's'} waiting for submission.
               </p>
               <div className="mt-3">
                 <Link
                   href="/portal/assignments"
-                  className="inline-flex h-9 items-center justify-center rounded-xl border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
+                  className="inline-flex h-9 items-center justify-center rounded-xl border border-red-200 bg-white px-4 text-sm font-semibold text-red-700 transition hover:bg-red-100"
                 >
                   View Homework
                 </Link>
@@ -162,7 +162,7 @@ export default async function PortalDashboardPage() {
           )}
 
           {overview.unpaidInvoiceCount === 0 && overview.pendingAssignmentCount === 0 && (
-            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+            <div className="rounded-2xl border border-emerald-200 shadow-sm shadow-emerald-300 bg-emerald-50 p-4">
               <p className="text-sm font-semibold text-emerald-900">All clear</p>
               <p className="mt-1 text-sm text-emerald-800">
                 No urgent actions right now. Great consistency.
@@ -172,7 +172,7 @@ export default async function PortalDashboardPage() {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <section className="rounded-3xl border border-blue-200 shadow-blue-300 bg-gradient-to-br from-blue-100 via-blue-50 to-blue-100 p-5 shadow-sm sm:p-6">
         <h2 className="text-base font-semibold text-slate-900 sm:text-lg">Upcoming Lessons</h2>
 
         {overview.upcomingSessions.length > 0 ? (
@@ -207,7 +207,7 @@ export default async function PortalDashboardPage() {
             ))}
           </div>
         ) : (
-          <p className="mt-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+          <p className="mt-3 rounded-2xl border border-slate-200 shadow-sm shadow-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
             No upcoming lessons are scheduled yet.
           </p>
         )}
