@@ -8,7 +8,7 @@ export default function PortalLayout({ children }: { children: ReactNode }) {
   const currentYear = new Date().getFullYear();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-100/80 via-rose-50/90 to-sky-100/90">
+    <div className="flex min-h-screen flex-col bg-gradient-to-br from-sky-100/80 via-rose-50/90 to-sky-100/90">
       <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-4xl items-center justify-between px-4 py-3 sm:gap-6 sm:px-6">
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
@@ -30,7 +30,7 @@ export default function PortalLayout({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-4xl px-4 pb-24 pt-5 sm:px-6 sm:pb-6">{children}</main>
+      <main className="mx-auto w-full max-w-4xl flex-1 px-4 pb-24 pt-5 sm:px-6 sm:pb-6">{children}</main>
 
       <footer className="border-t border-slate-200/80 bg-white/90 pb-20 pt-5 text-xs text-slate-600 sm:pb-5 sm:text-sm">
         <div className="mx-auto flex w-full max-w-4xl flex-col items-center justify-between gap-1 px-4 text-center sm:flex-row sm:gap-2 sm:px-6 sm:text-left">

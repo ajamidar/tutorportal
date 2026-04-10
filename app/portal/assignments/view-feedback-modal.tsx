@@ -9,10 +9,12 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ArrowUpRight } from 'lucide-react';
 
 type ViewFeedbackModalProps = {
   marks: number | null;
   feedbackText: string | null;
+  feedbackPdfPath: string | null;
   feedbackPdfUrl: string | null;
   markedDate: string | null;
 };
@@ -27,9 +29,14 @@ function formatDate(value: string) {
   });
 }
 
+function getFeedbackPdfViewerUrl(pdfPath: string) {
+  return `/portal/assignments/feedback-pdf?path=${encodeURIComponent(pdfPath)}`;
+}
+
 export function ViewFeedbackModal({
   marks,
   feedbackText,
+  feedbackPdfPath,
   feedbackPdfUrl,
   markedDate,
 }: ViewFeedbackModalProps) {
@@ -63,21 +70,36 @@ export function ViewFeedbackModal({
             </div>
           )}
 
-          {feedbackPdfUrl && (
-            <div>
-              <p className="mb-2 text-sm font-medium text-slate-900">Detailed Feedback PDF</p>
-              <a
-                href={feedbackPdfUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm transition-all duration-150 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
-              >
-                Download PDF
-              </a>
+          {feedbackPdfPath && (
+            (() => {
+              const viewerUrl = getFeedbackPdfViewerUrl(feedbackPdfPath);
+
+              return (
+            <div className="space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm font-medium text-violet-900">Detailed Feedback PDF</p>
+                <a
+                  href={viewerUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-600 bg-slate-500 px-3 text-sm font-medium text-white shadow-sm shadow-slate-700 transition-all duration-150 hover:bg-opacity-75 "
+                >
+                  Open in new tab <ArrowUpRight className="ml-1 h-4 w-4"/>
+                </a>
+              </div>
+              <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+                <iframe
+                  src={viewerUrl}
+                  title="Tutor feedback PDF"
+                  className="h-[60vh] w-full"
+                />
+              </div>
             </div>
+              );
+            })()
           )}
 
-          {!feedbackText && !feedbackPdfUrl && marks === null && (
+          {!feedbackText && !feedbackPdfPath && marks === null && (
             <p className="text-sm text-slate-500">No feedback provided yet.</p>
           )}
         </div>

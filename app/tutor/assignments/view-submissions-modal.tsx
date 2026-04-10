@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { getTutorAssignmentWithSubmissions, TutorAssignmentWithSubmissions } from '@/app/actions/assignments';
 import { Button } from '@/components/ui/button';
+import { DangerConfirmDialog } from '@/components/ui/danger-confirm-dialog';
 import {
   Dialog,
   DialogContent,
@@ -12,6 +13,8 @@ import {
 } from '@/components/ui/dialog';
 import { ViewAssignmentSubmissions } from './view-assignment-submissions';
 import { Loader2 } from 'lucide-react';
+import { deleteTutorAssignment } from '@/app/actions/assignments';
+import { toast } from 'sonner';
 
 type ViewSubmissionsModalProps = {
   assignmentId: string;
@@ -49,7 +52,7 @@ export function ViewSubmissionsModal({ assignmentId, assignmentTitle }: ViewSubm
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="h-8 px-3 text-xs">
+        <Button variant="outline" className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm shadow-slate-400 transition-all duration-150 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
           View Submissions
         </Button>
       </DialogTrigger>
@@ -106,5 +109,36 @@ export function ViewSubmissionsModal({ assignmentId, assignmentTitle }: ViewSubm
         )}
       </DialogContent>
     </Dialog>
+  );
+}
+
+type DeleteAssignmentButtonProps = {
+  assignmentId: string;
+  assignmentTitle: string;
+};
+
+export function DeleteAssignmentButton({ assignmentId, assignmentTitle }: DeleteAssignmentButtonProps) {
+  return (
+    <DangerConfirmDialog
+      triggerLabel="Delete"
+      title={`Delete ${assignmentTitle}?`}
+      description="This permanently deletes the assignment, all submissions, and the uploaded files. This cannot be undone."
+      confirmLabel="Delete assignment"
+      pendingLabel="Deleting..."
+      keyword="DELETE"
+      acknowledgeLabel="I understand this permanently removes the assignment and related data."
+      triggerClassName="h-9 px-3 text-sm"
+      onConfirm={async () => {
+        const result = await deleteTutorAssignment(assignmentId);
+
+        if (!result.ok) {
+          toast.error(result.error);
+          return false;
+        }
+
+        toast.success('Assignment deleted.');
+        return true;
+      }}
+    />
   );
 }

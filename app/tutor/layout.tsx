@@ -9,7 +9,7 @@ export default function TutorLayout({ children }: { children: ReactNode }) {
   const currentYear = new Date().getFullYear();
 
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="flex min-h-screen flex-col bg-transparent">
       <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-3 sm:px-6 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center justify-between gap-3">
@@ -32,7 +32,7 @@ export default function TutorLayout({ children }: { children: ReactNode }) {
           </form>
         </div>
       </header>
-      <div className="mx-auto w-full max-w-7xl px-4 pb-24 pt-5 sm:px-6 sm:pb-6 md:pb-6">{children}</div>
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-5 sm:px-6 sm:pb-6 md:pb-6">{children}</main>
       <footer className="border-t border-slate-200/80 bg-white/90 pb-20 pt-5 text-xs text-slate-600 sm:pb-5 sm:text-sm">
         <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-between gap-1 px-4 text-center sm:flex-row sm:gap-2 sm:px-6 sm:text-left">
           <p>© {currentYear} TutorPortal. All rights reserved.</p>

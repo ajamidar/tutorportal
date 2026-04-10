@@ -3,7 +3,7 @@ import { getTutorStudents } from '@/app/actions/students';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CreateAssignmentModal } from './create-assignment-modal';
-import { ViewSubmissionsModal } from './view-submissions-modal';
+import { DeleteAssignmentButton, ViewSubmissionsModal } from './view-submissions-modal';
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString('en-GB', {
@@ -28,21 +28,47 @@ function getStatusPresentation(status: 'pending' | 'submitted' | 'marked') {
 export default async function TutorAssignmentsPage() {
   const [assignments, students] = await Promise.all([getTutorAssignments(), getTutorStudents()]);
 
-  const groupedClientsMap = new Map<string, { clientProfileId: string; studentName: string; clientEmail: string }>();
+  const groupedClientsMap = new Map<
+    string,
+    {
+      clientKey: string;
+      studentName: string;
+      clientEmail: string;
+      subjects: Array<{ clientProfileId: string; subject: string }>;
+    }
+  >();
+
   for (const student of students) {
     const key = `${student.client_id}:${student.student_name}:${student.level}`;
-    if (!groupedClientsMap.has(key)) {
-      groupedClientsMap.set(key, {
+    const existing = groupedClientsMap.get(key);
+
+    if (existing) {
+      existing.subjects.push({
         clientProfileId: student.id,
-        studentName: student.student_name,
-        clientEmail: student.client.email,
+        subject: student.subject,
       });
+      continue;
     }
+
+    groupedClientsMap.set(key, {
+      clientKey: key,
+      studentName: student.student_name,
+      clientEmail: student.client.email,
+      subjects: [
+        {
+          clientProfileId: student.id,
+          subject: student.subject,
+        },
+      ],
+    });
   }
 
-  const assignmentClients = Array.from(groupedClientsMap.values()).sort((a, b) =>
-    a.studentName.localeCompare(b.studentName)
-  );
+  const assignmentClients = Array.from(groupedClientsMap.values())
+    .map((client) => ({
+      ...client,
+      subjects: client.subjects.sort((a, b) => a.subject.localeCompare(b.subject)),
+    }))
+    .sort((a, b) => a.studentName.localeCompare(b.studentName));
 
   return (
     <main className="space-y-4">
@@ -106,11 +132,12 @@ export default async function TutorAssignmentsPage() {
                               href={assignment.resource_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all duration-150 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+                              className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm shadow-slate-400 transition-all duration-150 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
                             >
-                              Download File
+                              Download Assignment
                             </a>
                             <ViewSubmissionsModal assignmentId={assignment.id} assignmentTitle={assignment.title} />
+                            <DeleteAssignmentButton assignmentId={assignment.id} assignmentTitle={assignment.title} />
                           </div>
                         </td>
                       </tr>

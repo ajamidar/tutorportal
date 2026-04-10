@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { createAdminClient } from '@/utils/supabase/admin';
 import { createClient } from '@/utils/supabase/server';
 
 const ASSIGNMENT_BUCKET = 'academic_resources';
@@ -15,6 +16,7 @@ export type TutorAssignment = {
   resource_url: string;
   student: {
     student_name: string;
+    subject: string;
   } | null;
 };
 
@@ -40,7 +42,7 @@ export async function getTutorAssignments(): Promise<TutorAssignment[]> {
   const { data, error } = await supabase
     .from('assignments')
     .select(
-      'id, title, description, due_date, status, resource_path, resource_url, student:client_profiles(student_name), assignment_submissions(submission_status)'
+      'id, title, description, due_date, status, resource_path, resource_url, student:client_profiles(student_name, subject), assignment_submissions(submission_status)'
     )
     .eq('tutor_id', user.id)
     .order('due_date', { ascending: true });
@@ -78,6 +80,7 @@ export async function getTutorAssignments(): Promise<TutorAssignment[]> {
         student: student
           ? {
               student_name: student.student_name,
+              subject: student.subject,
             }
           : null,
       };
@@ -175,6 +178,116 @@ export async function createAssignment(formData: FormData) {
   return { ok: true };
 }
 
+async function listStoragePaths(bucket: string, prefix: string) {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase.storage.from(bucket).list(prefix, { limit: 1000 });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (data ?? []).map((item) => `${prefix}/${item.name}`);
+}
+
+async function removeStoragePaths(bucket: string, paths: string[]) {
+  const uniquePaths = Array.from(new Set(paths.filter((path) => path.trim().length > 0)));
+
+  if (uniquePaths.length === 0) {
+    return;
+  }
+
+  const supabase = createAdminClient();
+  const { error } = await supabase.storage.from(bucket).remove(uniquePaths);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function deleteTutorAssignment(assignmentId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { ok: false, error: 'You must be logged in.' };
+  }
+
+  const { data: assignment, error: assignmentError } = await supabase
+    .from('assignments')
+    .select(
+      `
+      id,
+      tutor_id,
+      resource_path,
+      assignment_submissions(
+        id,
+        submitted_file_path,
+        feedback_pdf_path,
+        client_profiles(client_id)
+      )
+    `
+    )
+    .eq('id', assignmentId)
+    .eq('tutor_id', user.id)
+    .maybeSingle();
+
+  if (assignmentError) {
+    return { ok: false, error: assignmentError.message };
+  }
+
+  if (!assignment) {
+    return { ok: false, error: 'Assignment not found.' };
+  }
+
+  const submissions = Array.isArray(assignment.assignment_submissions)
+    ? assignment.assignment_submissions
+    : assignment.assignment_submissions
+      ? [assignment.assignment_submissions]
+      : [];
+
+  const assignmentPaths = assignment.resource_path ? [assignment.resource_path] : [];
+  const submissionPrefixes = submissions.flatMap((submission) => {
+    const clientProfile = Array.isArray(submission.client_profiles)
+      ? submission.client_profiles[0]
+      : submission.client_profiles;
+
+    if (!clientProfile?.client_id) {
+      return [];
+    }
+
+    return [`${clientProfile.client_id}/${assignmentId}`, `feedback/${user.id}/${submission.id}`];
+  });
+
+  try {
+    await removeStoragePaths(ASSIGNMENT_BUCKET, assignmentPaths);
+
+    const expandedSubmissionPaths = new Set<string>();
+    for (const prefix of submissionPrefixes) {
+      const files = await listStoragePaths(SUBMISSION_BUCKET, prefix);
+      files.forEach((filePath) => expandedSubmissionPaths.add(filePath));
+    }
+
+    await removeStoragePaths(SUBMISSION_BUCKET, Array.from(expandedSubmissionPaths));
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : 'Failed to remove related files.',
+    };
+  }
+
+  const { error: deleteError } = await supabase.from('assignments').delete().eq('id', assignmentId);
+
+  if (deleteError) {
+    return { ok: false, error: deleteError.message };
+  }
+
+  revalidatePath('/tutor/assignments');
+  revalidatePath('/portal/assignments');
+  return { ok: true };
+}
+
 // ============ SUBMISSION MANAGEMENT ============
 
 const SUBMISSION_BUCKET = 'student_submissions';
@@ -184,6 +297,7 @@ export type ClientAssignmentWithSubmission = {
   id: string;
   title: string;
   description: string | null;
+  subject: string | null;
   due_date: string;
   status: 'pending' | 'submitted' | 'marked';
   resource_url: string;
@@ -193,6 +307,7 @@ export type ClientAssignmentWithSubmission = {
     submission_status: 'pending' | 'submitted' | 'marked';
     marks: number | null;
     feedback_text: string | null;
+    feedback_pdf_path: string | null;
     feedback_pdf_url: string | null;
     marked_date: string | null;
   } | null;
@@ -235,6 +350,7 @@ export async function getClientAssignmentsWithSubmissions(): Promise<ClientAssig
       status, 
       resource_path, 
       resource_url,
+      student:client_profiles(subject),
       assignment_submissions(
         id,
         submitted_date,
@@ -274,6 +390,7 @@ export async function getClientAssignmentsWithSubmissions(): Promise<ClientAssig
         : row.assignment_submissions
           ? [row.assignment_submissions]
           : [];
+      const student = Array.isArray(row.student) ? row.student[0] : row.student;
       const submission = submissions[0] || null;
       const effectiveStatus = submission?.submission_status ?? row.status;
 
@@ -292,6 +409,7 @@ export async function getClientAssignmentsWithSubmissions(): Promise<ClientAssig
         id: row.id,
         title: row.title,
         description: row.description,
+        subject: student?.subject ?? null,
         due_date: row.due_date,
         status: effectiveStatus,
         resource_url: downloadUrl,
@@ -302,6 +420,7 @@ export async function getClientAssignmentsWithSubmissions(): Promise<ClientAssig
               submission_status: submission.submission_status,
               marks: submission.marks,
               feedback_text: submission.feedback_text,
+              feedback_pdf_path: submission.feedback_pdf_path,
               feedback_pdf_url: feedbackPdfUrl,
               marked_date: submission.marked_date,
             }
@@ -564,7 +683,7 @@ export async function markAssignment(
   // Verify the submission exists and belongs to a tutor's assignment
   const { data: submission, error: submissionError } = await supabase
     .from('assignment_submissions')
-    .select('id, assignment_id')
+    .select('id, assignment_id, feedback_pdf_path')
     .eq('id', submissionId)
     .maybeSingle();
 
@@ -629,7 +748,7 @@ export async function markAssignment(
       marked_date: new Date().toISOString(),
       marked_by_tutor_id: user.id,
       feedback_text: feedbackText || null,
-      feedback_pdf_path: feedbackPdfPath || null,
+      feedback_pdf_path: feedbackPdfPath || submission.feedback_pdf_path || null,
       marks: marks !== null ? marks : null,
     })
     .eq('id', submissionId);

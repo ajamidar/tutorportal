@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ArrowUpFromDot } from 'lucide-react';
 
 type SubmitAssignmentModalProps = {
   assignmentId: string;
@@ -35,7 +36,7 @@ export function SubmitAssignmentModal({ assignmentId, hasSubmitted }: SubmitAssi
         <Button
           className={`inline-flex h-9 items-center justify-center ${hasSubmitted ? 'bg-green-500 text-white border-green-600 shadow-sm shadow-green-700' : 'bg-red-500 text-white border-red-500 shadow-sm shadow-red-600'} rounded-xl px-3 text-sm font-medium transition hover:bg-opacity-75 `}
         >
-          {hasSubmitted ? 'Resubmit Work' : 'Submit Work'}
+          <ArrowUpFromDot className='mr-1 h-4 w-4'/>{hasSubmitted ? 'Resubmit Work' : 'Submit Work'}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[85vh] overflow-y-auto">
