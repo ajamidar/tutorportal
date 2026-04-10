@@ -16,7 +16,7 @@ const CURRENT_YEAR = new Date().getFullYear();
 const DARK = {
   pageBg: 'linear-gradient(135deg, #0f0f1a 0%, #12122a 40%, #0d1a2e 100%)',
   blobA: '#6366f1', blobB: '#3b82f6', blobC: '#8b5cf6',
-  navBg: 'rgba(15,15,26,0.85)', navBorder: 'rgba(255,255,255,0.08)',
+  navBg: '#0f0f1a', navBorder: 'rgba(255,255,255,0.08)',
   logoGrad: 'linear-gradient(135deg,#6366f1,#4f46e5)',
   brandText: '#ffffff',
   badgeBg: 'rgba(99,102,241,0.18)', badgeBorder: 'rgba(99,102,241,0.35)', badgeText: '#a5b4fc',
@@ -52,7 +52,7 @@ const DARK = {
 const LIGHT = {
   pageBg: 'linear-gradient(160deg, #f0f7ff 0%, #dbeafe 35%, #f0f9ff 100%)',
   blobA: '#bfdbfe', blobB: '#bae6fd', blobC: '#dbeafe',
-  navBg: 'rgba(255,255,255,0.88)', navBorder: 'rgba(59,130,246,0.15)',
+  navBg: '#ffffff', navBorder: 'rgba(59,130,246,0.15)',
   logoGrad: 'linear-gradient(135deg,#3b82f6,#2563eb)',
   brandText: '#0f2d5c',
   badgeBg: 'rgba(59,130,246,0.1)', badgeBorder: 'rgba(59,130,246,0.28)', badgeText: '#1d4ed8',
@@ -131,10 +131,10 @@ const PROOF = [
 ];
 
 const REVIEWS = [
-  { name: 'Jamie R.',   role: 'GCSE Maths & Science, London',            stars: 5, text: 'Before TutorPortal I was sending 15 WhatsApp messages just to confirm one session. Now everything is just there — sessions, homework, grades.' },
+  { name: 'Jamie R.',   role: 'GCSE Maths & Science, London',            stars: 5, text: 'Before TutorFlow I was sending 15 WhatsApp messages just to confirm one session. Now everything is just there — sessions, homework, grades.' },
   { name: 'Priya S.',  role: 'A-Level Biology, Manchester',              stars: 5, text: 'The Stripe integration alone saved me hours of awkward payment chasing. My students pay the moment I send the link.' },
   { name: 'Tom W.',    role: 'Primary & KS3 English, Bristol',           stars: 5, text: 'My students love their portal. They check homework and upcoming sessions without me having to remind them every time.' },
-  { name: 'Aisha K.',  role: 'GCSE French & Spanish, Leeds',             stars: 5, text: 'I manage 18 students across 3 schools. TutorPortal keeps it all in one place — I genuinely don\'t know how I coped before.' },
+  { name: 'Aisha K.',  role: 'GCSE French & Spanish, Leeds',             stars: 5, text: 'I manage 18 students across 3 schools. TutorFlow keeps it all in one place — I genuinely don\'t know how I coped before.' },
   { name: 'Daniel M.', role: 'A-Level Maths & Further Maths, Edinburgh', stars: 5, text: 'Parents love seeing a proper grade breakdown rather than just a WhatsApp update. It\'s built real trust with my clients.' },
   { name: 'Sophie L.', role: 'GCSE Chemistry, Birmingham',               stars: 5, text: 'Setup took less than 10 minutes. I added all my students, scheduled 4 weeks of sessions, and sent payment links the same evening.' },
   { name: 'Marcus T.', role: 'KS2 & KS3 Maths, Oxford',                 stars: 5, text: 'My tutoring feels genuinely professional now. Students and parents can see everything they need — it\'s built real trust.' },
@@ -290,6 +290,7 @@ export default function LandingPageClient() {
       `}</style>
 
       <div
+        id="top"
         className="page-transition relative min-h-screen overflow-x-hidden"
         style={{
           background: t.pageBg,
@@ -310,15 +311,18 @@ export default function LandingPageClient() {
         </div>
 
         {/* ── NAV ── */}
-        <header className="sticky top-0 z-30 border-b"
-          style={{ background: t.navBg, borderColor: t.navBorder, backdropFilter:'blur(16px)', WebkitBackdropFilter:'blur(16px)' }}>
+        <header className="fixed inset-x-0 top-0 z-50 border-b"
+          style={{ background: t.navBg, borderColor: t.navBorder }}>
           <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ background: t.logoGrad }}>
-                <GraduationCap className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold tracking-tight" style={{ color: t.brandText }}>TutorPortal</span>
-            </div>
+            <Link href="#top" aria-label="Back to top" className="flex items-center">
+              <Image
+                src={dark ? '/tutorflow-dark.png' : '/tutorflow.png'}
+                alt="TutorFlow"
+                width={520}
+                height={130}
+                className="h-10 w-auto object-contain sm:h-11"
+              />
+            </Link>
             <div className="flex items-center gap-2 sm:gap-3">
               <button id="theme-toggle" aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
                 onClick={() => setDark((d) => !d)}
@@ -339,7 +343,7 @@ export default function LandingPageClient() {
         </header>
 
         {/* ── HERO (image) ── */}
-        <section className="relative overflow-hidden" style={{ minHeight: '88vh' }}>
+        <section className="relative mt-[72px] overflow-hidden sm:mt-[76px]" style={{ minHeight: '88vh' }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/hero-bg.jpg" alt="Tutor working with a student"
             className="absolute inset-0 h-full w-full object-cover object-top" />
@@ -421,7 +425,7 @@ export default function LandingPageClient() {
               </div>
               <div className="mt-14 text-center lg:text-left" data-animate>
                 <p className="text-2xl font-bold sm:text-3xl" style={{ color: t.painHeadline }}>
-                  TutorPortal handles all of it.
+                  TutorFlow handles all of it.
                 </p>
                 <p className="mt-2" style={{ color: t.painText }}>One platform. Every tool your tutoring business needs.</p>
               </div>
@@ -616,14 +620,18 @@ export default function LandingPageClient() {
         {/* ── FOOTER ── */}
         <footer className="relative z-10 border-t px-6 py-8" style={{ borderColor: t.footerBorder }}>
           <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
-            <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg" style={{ background: t.logoGrad }}>
-                <GraduationCap className="h-4 w-4 text-white" />
-              </div>
-              <span className="text-sm font-semibold" style={{ color: t.footerBrand }}>TutorPortal</span>
-            </div>
+            <Link href="#top" aria-label="Back to top" className="flex items-center gap-2">
+              <Image
+                src="/tutorflow.png"
+                alt="TutorFlow"
+                width={28}
+                height={28}
+                className="h-7 w-7"
+              />
+              <span className="text-sm font-semibold" style={{ color: t.footerBrand }}>TutorFlow</span>
+            </Link>
             <p className="text-xs" style={{ color: t.footerCopy }}>
-              © {CURRENT_YEAR} TutorPortal. Built for tutors, by tutors.
+              © {CURRENT_YEAR} TutorFlow. Built for tutors, by tutors.
             </p>
             <div className="flex gap-4 text-xs" style={{ color: t.footerLink }}>
               <Link href="/login" className="transition hover:opacity-70">Sign In</Link>

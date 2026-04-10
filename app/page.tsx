@@ -3,9 +3,9 @@ import { createClient } from '@/utils/supabase/server';
 import LandingPageClient from './landing-page';
 
 export const metadata = {
-  title: 'TutorPortal — Smarter Tutoring, Simplified',
+  title: 'TutorFlow — Smarter Tutoring, Simplified',
   description:
-    'TutorPortal gives tutors a white-label client portal to manage sessions, track student progress, and handle billing — all in one place.',
+    'TutorFlow gives tutors a white-label client portal to manage sessions, track student progress, and handle billing — all in one place.',
 };
 
 export default async function HomePage() {

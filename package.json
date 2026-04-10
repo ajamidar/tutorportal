@@ -1,7 +1,7 @@
 {
   "name": "tutor-portal",
   "version": "1.0.0",
-  "description": "TutorPortal MVP",
+  "description": "TutorFlow MVP",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

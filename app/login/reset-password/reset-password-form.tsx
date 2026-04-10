@@ -122,7 +122,7 @@ export default function ResetPasswordForm({ code, initialError }: ResetPasswordF
           Create a new password
         </h1>
         <p className="mt-2 text-sm text-slate-600">
-          Choose a strong password for your TutorPortal account.
+          Choose a strong password for your TutorFlow account.
         </p>
 
         {localError ? (

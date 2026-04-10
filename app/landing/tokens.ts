@@ -9,7 +9,7 @@
 export const DARK = {
   pageBg: 'linear-gradient(135deg, #0f0f1a 0%, #12122a 40%, #0d1a2e 100%)',
   blobA: '#6366f1', blobB: '#3b82f6', blobC: '#8b5cf6',
-  navBg: 'rgba(15,15,26,0.85)', navBorder: 'rgba(255,255,255,0.08)',
+  navBg: '#0f0f1a', navBorder: 'rgba(255,255,255,0.08)',
   logoGrad: 'linear-gradient(135deg,#6366f1,#4f46e5)', brandText: '#ffffff',
   badgeBg: 'rgba(99,102,241,0.18)', badgeBorder: 'rgba(99,102,241,0.35)', badgeText: '#a5b4fc',
   h1Color: '#ffffff', h1Shadow: '0 0 80px rgba(99,102,241,0.3)', subText: '#94a3b8',
@@ -43,7 +43,7 @@ export const DARK = {
 export const LIGHT = {
   pageBg: 'linear-gradient(160deg, #f0f7ff 0%, #dbeafe 35%, #f0f9ff 100%)',
   blobA: '#bfdbfe', blobB: '#bae6fd', blobC: '#dbeafe',
-  navBg: 'rgba(255,255,255,0.88)', navBorder: 'rgba(59,130,246,0.15)',
+  navBg: '#ffffff', navBorder: 'rgba(59,130,246,0.15)',
   logoGrad: 'linear-gradient(135deg,#3b82f6,#2563eb)', brandText: '#0f2d5c',
   badgeBg: 'rgba(59,130,246,0.1)', badgeBorder: 'rgba(59,130,246,0.28)', badgeText: '#1d4ed8',
   h1Color: '#0f172a', h1Shadow: 'none', subText: '#475569',

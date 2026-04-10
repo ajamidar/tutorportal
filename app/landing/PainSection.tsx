@@ -48,7 +48,7 @@ export function PainSection({ t }: Props) {
 
         <div className="mt-14 text-center" data-animate>
           <p className="text-2xl font-bold sm:text-3xl" style={{ color: t.painHeadline }}>
-            TutorPortal handles all of it.
+            TutorFlow handles all of it.
           </p>
           <p className="mt-2" style={{ color: t.painText }}>One platform. Every tool your tutoring business needs.</p>
         </div>

@@ -79,10 +79,10 @@ export const STEPS: StepItem[] = [
 
 export interface ReviewItem { name: string; role: string; stars: number; text: string; }
 export const REVIEWS: ReviewItem[] = [
-  { name: 'Jamie R.',   role: 'GCSE Maths & Science, London',            stars: 5, text: "Before TutorPortal I was sending 15 WhatsApp messages just to confirm one session. Now everything is just there — sessions, homework, grades." },
+  { name: 'Jamie R.',   role: 'GCSE Maths & Science, London',            stars: 5, text: "Before TutorFlow I was sending 15 WhatsApp messages just to confirm one session. Now everything is just there — sessions, homework, grades." },
   { name: 'Priya S.',  role: 'A-Level Biology, Manchester',              stars: 5, text: "The Stripe integration alone saved me hours of awkward payment chasing. My students pay the moment I send the link." },
   { name: 'Tom W.',    role: 'Primary & KS3 English, Bristol',           stars: 5, text: "My students love their portal. They check homework and upcoming sessions without me having to remind them every time." },
-  { name: 'Aisha K.',  role: 'GCSE French & Spanish, Leeds',             stars: 5, text: "I manage 18 students across 3 schools. TutorPortal keeps it all in one place — I genuinely don't know how I coped before." },
+  { name: 'Aisha K.',  role: 'GCSE French & Spanish, Leeds',             stars: 5, text: "I manage 18 students across 3 schools. TutorFlow keeps it all in one place — I genuinely don't know how I coped before." },
   { name: 'Daniel M.', role: 'A-Level Maths & Further Maths, Edinburgh', stars: 5, text: "Parents love seeing a proper grade breakdown rather than just a WhatsApp update. It's built real trust with my clients." },
   { name: 'Sophie L.', role: 'GCSE Chemistry, Birmingham',               stars: 5, text: "Setup took less than 10 minutes. I added all my students, scheduled 4 weeks of sessions, and sent payment links the same evening." },
   { name: 'Marcus T.', role: 'KS2 & KS3 Maths, Oxford',                 stars: 5, text: "My tutoring feels genuinely professional now. Students and parents can see everything they need — it's built real trust." },

@@ -82,7 +82,7 @@ export default function LoginForm({ error, initialMode = 'signin', resetSent = f
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">
             #1 Platform for tutors and students
           </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">TutorPortal</h1>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">TutorFlow</h1>
         </div>
         <p className="mt-1 text-sm text-slate-600">
           {mode === 'signin'

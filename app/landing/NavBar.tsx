@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { GraduationCap, Moon, Sun, LogIn, CircleUserRound } from 'lucide-react';
+import Image from 'next/image';
+import { Moon, Sun, LogIn, CircleUserRound } from 'lucide-react';
 import type { Tokens } from './tokens';
 
 interface Props {
@@ -16,12 +17,15 @@ export function NavBar({ t, dark, onToggle }: Props) {
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         {/* Logo */}
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ background: t.logoGrad }}>
-            <GraduationCap className="h-5 w-5 text-white" />
-          </div>
-          <span className="text-xl font-bold tracking-tight" style={{ color: t.brandText }}>TutorPortal</span>
-        </div>
+        <Link href="#top" aria-label="Back to top" className="relative flex h-10 w-[170px] items-center rounded-xl bg-white/80 px-2 shadow-sm ring-1 ring-black/5 backdrop-blur-sm sm:h-11 sm:w-[190px]">
+          <Image
+            src={dark ? '/tutorflow-dark.png' : '/tutorflow.png'}
+            alt="TutorFlow"
+            width={520}
+            height={130}
+            className="h-full w-full object-contain object-left"
+          />
+        </Link>
 
         {/* Nav actions */}
         <div className="flex items-center gap-2 sm:gap-3">

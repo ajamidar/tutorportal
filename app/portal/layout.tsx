@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { signOutClientAction } from './actions';
 import { PortalNav } from './_components/portal-nav';
@@ -9,12 +11,20 @@ export default function PortalLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-br from-sky-100/80 via-rose-50/90 to-sky-100/90">
-      <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 backdrop-blur-xl">
-        <div className="mx-auto flex w-full max-w-4xl items-center justify-between px-4 py-3 sm:gap-6 sm:px-6">
-          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <h1 className="truncate text-base font-semibold tracking-tight text-slate-900 sm:text-lg">
-              Student Portal
-            </h1>
+      <header className="sticky top-0 z-30 border-b border-slate-200 bg-white">
+        <div className="mx-auto flex w-full max-w-4xl items-center justify-between py-3 pl-3 pr-4 sm:gap-6 sm:pl-4 sm:pr-6">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="shrink-0">
+              <Link href="/portal/dashboard" aria-label="Go to portal home">
+                <Image
+                  src="/tutorflow.png"
+                  alt="TutorFlow"
+                  width={520}
+                  height={130}
+                  className="h-10 w-auto object-contain sm:h-11"
+                />
+              </Link>
+            </div>
           </div>
 
           <div className="hidden sm:block">
@@ -34,7 +44,7 @@ export default function PortalLayout({ children }: { children: ReactNode }) {
 
       <footer className="border-t border-slate-200/80 bg-white/90 pb-20 pt-5 text-xs text-slate-600 sm:pb-5 sm:text-sm">
         <div className="mx-auto flex w-full max-w-4xl flex-col items-center justify-between gap-1 px-4 text-center sm:flex-row sm:gap-2 sm:px-6 sm:text-left">
-          <p>© {currentYear} TutorPortal. All rights reserved.</p>
+          <p>© {currentYear} TutorFlow. All rights reserved.</p>
           <p>Secure payments and lesson records for families and tutors.</p>
         </div>
       </footer>
