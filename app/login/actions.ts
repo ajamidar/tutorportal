@@ -58,10 +58,22 @@ export async function signInAction(formData: FormData) {
       role: resolvedRole,
       email: user.email,
       full_name: user.user_metadata?.full_name ?? null,
+      last_activity: new Date().toISOString(),
     });
 
     if (upsertError) {
       redirect(`/login?error=${encodeURIComponent(upsertError.message)}`);
+    }
+  } else {
+    // Update last_activity on login for existing users
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ last_activity: new Date().toISOString() })
+      .eq('id', user.id);
+
+    if (updateError) {
+      // Don't fail the login if we can't update last_activity
+      console.error('Failed to update last_activity:', updateError);
     }
   }
 
@@ -102,6 +114,23 @@ export async function signUpAction(formData: FormData) {
   // If email confirmation is enabled, a session may not exist yet..
   if (!data.session) {
     redirect('/login?error=Check+your+email+to+confirm+your+account+then+sign+in');
+  }
+
+  const {
+    data: { user: newUser },
+  } = await supabase.auth.getUser();
+
+  if (newUser) {
+    // Set initial last_activity for new users
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ last_activity: new Date().toISOString() })
+      .eq('id', newUser.id);
+
+    if (updateError) {
+      // Don't fail the signup flow if we can't update last_activity
+      console.error('Failed to set initial last_activity:', updateError);
+    }
   }
 
   redirect(role === 'tutor' ? '/tutor/dashboard' : '/portal/dashboard');
