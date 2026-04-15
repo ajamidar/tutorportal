@@ -1,5 +1,6 @@
 import { getClientInvoices } from '@/app/actions/portal';
 import { Badge } from '@/components/ui/badge';
+import { Download, PoundSterlingIcon, WalletCards } from 'lucide-react';
 
 function formatDate(value: string) {
   return new Date(value).toLocaleDateString('en-GB', {
@@ -33,11 +34,14 @@ export default async function PortalBillingPage() {
 
   return (
     <main className="space-y-4">
-      <section className="rounded-3xl border border-green-300 shadow-green-400 bg-gradient-to-br from-green-50/80 via-green-50/50 to-green-50/80 p-5 shadow-sm sm:p-6">
+      <section className="rounded-3xl border border-green-300 shadow-green-400 bg-gradient-to-br from-green-50/50 via-green-50/50 to-green-50/50 p-5 shadow-sm sm:p-6">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">Billing</p>
-        <h1 className="mt-2 text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
-          Payments
-        </h1>
+        <div className="mt-2 flex items-center gap-0.5">
+          <WalletCards className='h-5 w-5 mb-0.5'/>
+          <h1 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            Payments
+          </h1>
+        </div>
 
         {invoices.length === 0 ? (
           <p className="mt-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
@@ -49,9 +53,10 @@ export default async function PortalBillingPage() {
               const status = getStatusPresentation(invoice.status);
 
               return (
-                <article key={invoice.id} className="rounded-2xl border border-orange-200 shadow-sm shadow-orange-300 bg-orange-50 p-4">
+                <article key={invoice.id} className="rounded-2xl border border-orange-200 shadow-sm shadow-orange-300 bg-slate-100 p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
+                      <p className="text-sm font-semibold text-slate-900 sm:text-base">{invoice.description}</p>
                       <p className="text-sm font-semibold text-slate-900 sm:text-base">
                         {formatAmountPounds(invoice.amount_pence)}
                       </p>
@@ -68,6 +73,13 @@ export default async function PortalBillingPage() {
                       className="mt-3 inline-flex h-9 items-center justify-center rounded-xl bg-blue-600 px-3 text-sm font-medium text-white transition hover:bg-blue-500"
                     >
                       Pay Now
+                    </a>
+                  ) : invoice.status === 'paid' ? (
+                    <a
+                      href={`/api/invoices/${invoice.id}/receipt`}
+                      className="mt-3 inline-flex h-9 items-center justify-center rounded-xl border border-green-400 shadow-sm shadow-green-500 bg-white px-3 text-sm font-medium text-green-700 transition hover:bg-slate-100"
+                    >
+                      <Download className='h-4 w-4 mr-1'/>Download Receipt
                     </a>
                   ) : null}
                 </article>

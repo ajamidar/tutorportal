@@ -620,15 +620,14 @@ export default function LandingPageClient() {
         {/* ── FOOTER ── */}
         <footer className="relative z-10 border-t px-6 py-8" style={{ borderColor: t.footerBorder }}>
           <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
-            <Link href="#top" aria-label="Back to top" className="flex items-center gap-2">
+            <Link href="#top" aria-label="Back to top" className="relative flex h-10 w-[160px] items-center rounded-xl bg-white/80 shadow-sm ring-1 ring-black/5 backdrop-blur-sm sm:h-11 sm:w-[180px]">
               <Image
-                src="/tutorflow.png"
+                src={dark ? '/tutorflow-dark.png' : '/tutorflow.png'}
                 alt="TutorFlow"
-                width={28}
-                height={28}
-                className="h-7 w-7"
+                width={520}
+                height={130}
+                className="h-full w-full"
               />
-              <span className="text-sm font-semibold" style={{ color: t.footerBrand }}>TutorFlow</span>
             </Link>
             <p className="text-xs" style={{ color: t.footerCopy }}>
               © {CURRENT_YEAR} TutorFlow. Built for tutors, by tutors.

@@ -6,6 +6,7 @@ import { getStripeServerClient } from '@/utils/stripe/server';
 
 export type TutorInvoice = {
   id: string;
+  description: string;
   client_id: string;
   amount_pence: number;
   status: 'unpaid' | 'paid' | 'void';
@@ -134,7 +135,7 @@ export async function getTutorInvoices(): Promise<TutorInvoice[]> {
   const { data, error } = await supabase
     .from('invoices')
     .select(
-      'id, client_id, amount_pence, status, stripe_payment_link, created_at, client:client_profiles(student_name, client:profiles!client_profiles_client_id_fkey(full_name, email))'
+      'id, description, client_id, amount_pence, status, stripe_payment_link, created_at, client:client_profiles(student_name, client:profiles!client_profiles_client_id_fkey(full_name, email))'
     )
     .eq('tutor_id', user.id)
     .order('created_at', { ascending: false });
@@ -151,6 +152,7 @@ export async function getTutorInvoices(): Promise<TutorInvoice[]> {
 
     return {
       id: row.id,
+      description: row.description,
       client_id: row.client_id,
       amount_pence: row.amount_pence,
       status: row.status,
@@ -163,7 +165,7 @@ export async function getTutorInvoices(): Promise<TutorInvoice[]> {
   });
 }
 
-export async function createInvoice(clientId: string, amountPence: number) {
+export async function createInvoice(clientId: string, amountPence: number, description: string) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -179,6 +181,11 @@ export async function createInvoice(clientId: string, amountPence: number) {
 
   if (!Number.isInteger(amountPence) || amountPence <= 0) {
     return { ok: false, error: 'Amount must be a positive value in pence.' };
+  }
+
+  const invoiceDescription = description.trim();
+  if (!invoiceDescription) {
+    return { ok: false, error: 'Please enter an invoice description.' };
   }
 
   const { data: tutorProfile, error: tutorProfileError } = await supabase
@@ -214,14 +221,16 @@ export async function createInvoice(clientId: string, amountPence: number) {
     const stripe = getStripeServerClient();
 
     const stripeAccount = tutorProfile.stripe_connect_id;
+    const createdAtIso = new Date().toISOString();
 
     const product = await stripe.products.create(
       {
-        name: `Tutor invoice: ${rosterClient.student_name}`,
+        name: invoiceDescription,
         metadata: {
           tutor_id: user.id,
           client_profile_id: rosterClient.id,
           subject: rosterClient.subject ?? 'General',
+          invoice_created_at: createdAtIso,
         },
       },
       { stripeAccount }
@@ -250,10 +259,12 @@ export async function createInvoice(clientId: string, amountPence: number) {
     const { error: insertError } = await supabase.from('invoices').insert({
       tutor_id: user.id,
       client_id: rosterClient.id,
+      description: invoiceDescription,
       amount_pence: amountPence,
       stripe_payment_link: paymentLink.url,
       stripe_payment_link_id: paymentLink.id,
       status: 'unpaid',
+      created_at: createdAtIso,
     });
 
     if (insertError) {

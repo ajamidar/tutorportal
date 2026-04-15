@@ -17,13 +17,13 @@ export function NavBar({ t, dark, onToggle }: Props) {
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         {/* Logo */}
-        <Link href="#top" aria-label="Back to top" className="relative flex h-10 w-[170px] items-center rounded-xl bg-white/80 px-2 shadow-sm ring-1 ring-black/5 backdrop-blur-sm sm:h-11 sm:w-[190px]">
+        <Link href="#top" aria-label="Back to top" className="relative flex h-10 w-[160px] items-center rounded-xl bg-white/80 shadow-sm ring-1 ring-black/5 backdrop-blur-sm sm:h-11 sm:w-[180px]">
           <Image
             src={dark ? '/tutorflow-dark.png' : '/tutorflow.png'}
             alt="TutorFlow"
-            width={520}
-            height={130}
-            className="h-full w-full object-contain object-left"
+            width={500}
+            height={160}
+            className="h-full w-full"
           />
         </Link>
 

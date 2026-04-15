@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { sendPasswordResetAction, signInAction, signUpAction } from './actions';
 
 type LoginFormProps = {
@@ -76,7 +77,27 @@ export default function LoginForm({ error, initialMode = 'signin', resetSent = f
   }
 
   return (
-    <main className="flex min-h-screen items-center px-4 py-10 sm:py-14">
+    <main className="relative flex min-h-screen items-center px-4 py-10 sm:py-14">
+      <Link
+        href="/"
+        className="absolute left-4 top-4 flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+        aria-label="Back to landing page"
+      >
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+        Back 
+      </Link>
       <div className="mx-auto w-full max-w-md rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-lg sm:p-7">
         <div className="mb-5">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">

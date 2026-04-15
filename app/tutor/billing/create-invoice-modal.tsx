@@ -31,6 +31,7 @@ export function CreateInvoiceModal({ clients, stripeReady }: CreateInvoiceModalP
   const [isPending, startTransition] = useTransition();
   const [selectedClientId, setSelectedClientId] = useState(clients[0]?.clientProfileId ?? '');
   const [amountGbp, setAmountGbp] = useState('');
+  const [description, setDescription] = useState('');
   const [generatedLink, setGeneratedLink] = useState('');
 
   const hasClients = clients.length > 0 && stripeReady;
@@ -38,6 +39,7 @@ export function CreateInvoiceModal({ clients, stripeReady }: CreateInvoiceModalP
   function resetForm() {
     setSelectedClientId(clients[0]?.clientProfileId ?? '');
     setAmountGbp('');
+    setDescription('');
     setGeneratedLink('');
   }
 
@@ -80,10 +82,15 @@ export function CreateInvoiceModal({ clients, stripeReady }: CreateInvoiceModalP
                 return;
               }
 
+              if (!description.trim()) {
+                toast.error('Please add an invoice description.');
+                return;
+              }
+
               const amountPence = Math.round(parsedAmount * 100);
 
               startTransition(async () => {
-                const result = await createInvoice(selectedClientId, amountPence);
+                const result = await createInvoice(selectedClientId, amountPence, description);
 
                 if (!result.ok) {
                   toast.error(result.error);
@@ -122,6 +129,18 @@ export function CreateInvoiceModal({ clients, stripeReady }: CreateInvoiceModalP
                 required
               />
               <p className="text-xs text-slate-500">Converted to pence automatically on submit.</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="invoice_description">Invoice Description</Label>
+              <Input
+                id="invoice_description"
+                placeholder="e.g. April GCSE Maths tuition"
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                required
+              />
+              <p className="text-xs text-slate-500">Shown as the invoice title for both tutor and student portals.</p>
             </div>
 
             <Button type="submit" className="w-full" disabled={isPending}>

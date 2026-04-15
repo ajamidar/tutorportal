@@ -12,6 +12,7 @@ export function CopyLinkButton({ paymentLink }: CopyLinkButtonProps) {
     <Button
       type="button"
       variant="outline"
+      className='bg-slate-500 text-white shadow-sm shadow-slate-600 border-slate-500 hover:text-white hover:bg-slate-500/90'
       onClick={async () => {
         try {
           await navigator.clipboard.writeText(paymentLink);

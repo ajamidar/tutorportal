@@ -40,6 +40,7 @@ export type ClientAssignment = {
 
 export type ClientInvoice = {
   id: string;
+  description: string;
   amount_pence: number;
   status: 'unpaid' | 'paid' | 'void';
   stripe_payment_link: string;
@@ -291,7 +292,7 @@ export async function getClientInvoices(): Promise<ClientInvoice[]> {
 
   const { data, error } = await supabase
     .from('invoices')
-    .select('id, amount_pence, status, stripe_payment_link, created_at')
+    .select('id, description, amount_pence, status, stripe_payment_link, created_at')
     .in('client_id', linkedProfileIds)
     .order('created_at', { ascending: false });
 
@@ -301,6 +302,7 @@ export async function getClientInvoices(): Promise<ClientInvoice[]> {
 
   return (data ?? []).map((row) => ({
     id: row.id,
+    description: row.description,
     amount_pence: row.amount_pence,
     status: row.status,
     stripe_payment_link: row.stripe_payment_link,

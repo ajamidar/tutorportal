@@ -6,6 +6,7 @@ import { ConnectStripeButton } from './connect-stripe-button';
 import { CopyLinkButton } from './copy-link-button';
 import { CreateInvoiceModal } from './create-invoice-modal';
 import { DeleteInvoiceButton } from './delete-invoice-button';
+import { Download } from 'lucide-react';
 
 function formatAmountPounds(amountPence: number) {
   return new Intl.NumberFormat('en-GB', {
@@ -105,6 +106,9 @@ export default async function TutorBillingPage() {
                       Date
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.08em] text-slate-600">
+                      Title
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.08em] text-slate-600">
                       Student
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.08em] text-slate-600">
@@ -125,6 +129,7 @@ export default async function TutorBillingPage() {
                     return (
                       <tr key={invoice.id}>
                         <td className="px-4 py-3 text-sm text-slate-700">{formatDate(invoice.created_at)}</td>
+                        <td className="px-4 py-3 text-sm font-medium text-slate-900">{invoice.description}</td>
                         <td className="px-4 py-3 text-sm text-slate-900">
                           <p className="font-medium">{invoice.student_name}</p>
                           <p className="text-xs text-slate-500">{invoice.client_name ?? invoice.client_email}</p>
@@ -137,6 +142,14 @@ export default async function TutorBillingPage() {
                         </td>
                         <td className="px-4 py-3 text-right">
                           <div className="flex items-center justify-end gap-2">
+                            {invoice.status === 'paid' ? (
+                              <a
+                                href={`/api/invoices/${invoice.id}/receipt`}
+                                className="inline-flex h-10 items-center justify-center rounded-lg border border-slate-300 shadow-sm shadow-slate-300 px-3 text-sm font-medium text-green-700 transition hover:bg-slate-100"
+                              >
+                                <Download className='h-4 w-4 mr-1'/>Download Receipt
+                              </a>
+                            ) : null}
                             <CopyLinkButton paymentLink={invoice.stripe_payment_link} />
                             <DeleteInvoiceButton
                               invoiceId={invoice.id}
