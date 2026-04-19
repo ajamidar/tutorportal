@@ -52,7 +52,7 @@ export function TutorNav({ mobile = false }: TutorNavProps) {
 
   return (
     <nav aria-label="Tutor navigation">
-      <ul className="flex flex-wrap items-center gap-1.5 rounded-2xl border border-slate-200 bg-slate-100/80 p-1">
+      <ul className="flex flex-col gap-1">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
@@ -62,10 +62,10 @@ export function TutorNav({ mobile = false }: TutorNavProps) {
               <Link
                 href={item.href}
                 className={cn(
-                  'flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-colors',
+                  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
                   isActive
-                    ? 'border border-blue-600 bg-blue-600 text-white shadow-md shadow-blue-500'
-                    : 'border border-slate-200 bg-white/90 text-slate-700 shadow-sm shadow-slate-300 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700'
+                    ? 'bg-blue-500 text-white shadow-md shadow-blue-700'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 )}
                 aria-current={isActive ? 'page' : undefined}
               >
