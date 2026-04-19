@@ -6,6 +6,8 @@ import { ConnectStripeButton } from './connect-stripe-button';
 import { CopyLinkButton } from './copy-link-button';
 import { CreateInvoiceModal } from './create-invoice-modal';
 import { DeleteInvoiceButton } from './delete-invoice-button';
+import { MonthlyEarningsWidget } from './monthly-earnings-widget';
+import { YearlyEarningsChart, type MonthlyDataPoint } from './yearly-earnings-chart';
 import { Download } from 'lucide-react';
 
 function formatAmountPounds(amountPence: number) {
@@ -35,12 +37,47 @@ function getStatusPresentation(status: 'unpaid' | 'paid' | 'void') {
   return { label: 'Void', variant: 'default' as const };
 }
 
+const MONTH_NAMES_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 export default async function TutorBillingPage() {
   const [invoices, students, billingState] = await Promise.all([
     getTutorInvoices(),
     getTutorStudents(),
     getTutorBillingState(),
   ]);
+
+  // ── Compute monthly earnings for current month ──
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  const thisMonthInvoices = invoices.filter((inv) => {
+    const d = new Date(inv.created_at);
+    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+  });
+
+  const totalPaidPence = thisMonthInvoices
+    .filter((inv) => inv.status === 'paid')
+    .reduce((sum, inv) => sum + inv.amount_pence, 0);
+
+  const totalUnpaidPence = thisMonthInvoices
+    .filter((inv) => inv.status === 'unpaid')
+    .reduce((sum, inv) => sum + inv.amount_pence, 0);
+
+  const paidCount = thisMonthInvoices.filter((inv) => inv.status === 'paid').length;
+  const monthLabel = now.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+
+  // ── Compute yearly earnings (12 months) ──
+  const yearlyData: MonthlyDataPoint[] = MONTH_NAMES_SHORT.map((month, idx) => {
+    const earned = invoices
+      .filter((inv) => {
+        const d = new Date(inv.created_at);
+        return d.getFullYear() === currentYear && d.getMonth() === idx && inv.status === 'paid';
+      })
+      .reduce((sum, inv) => sum + inv.amount_pence, 0);
+
+    return { month, earningsPence: earned };
+  });
 
   const groupedClientsMap = new Map<string, { clientProfileId: string; studentName: string; clientEmail: string }>();
   for (const student of students) {
@@ -59,7 +96,7 @@ export default async function TutorBillingPage() {
   );
 
   return (
-    <main className="space-y-4">
+    <main className="space-y-5">
       {!billingState.stripe_onboarding_complete ? (
         <section className="rounded-2xl border border-amber-200 bg-amber-50 p-4 sm:p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-amber-700">Action Required</p>
@@ -80,6 +117,18 @@ export default async function TutorBillingPage() {
           </div>
         </section>
       ) : null}
+
+      {/* ── Earnings Widgets ── */}
+      <div className="grid gap-5 lg:grid-cols-2">
+        <MonthlyEarningsWidget
+          totalPaidPence={totalPaidPence}
+          totalUnpaidPence={totalUnpaidPence}
+          invoiceCount={thisMonthInvoices.length}
+          paidCount={paidCount}
+          monthLabel={monthLabel}
+        />
+        <YearlyEarningsChart data={yearlyData} year={currentYear} />
+      </div>
 
       <Card>
         <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

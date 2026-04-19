@@ -34,13 +34,13 @@ export function TutorNav({ mobile = false }: TutorNavProps) {
                 <Link
                   href={item.href}
                   className={cn(
-                    'flex min-h-12 flex-col items-center justify-center rounded-lg text-[10px] font-semibold tracking-wide transition-colors',
-                    isActive ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-100'
+                    'flex min-h-12 flex-col items-center justify-center rounded-lg text-[10px font-semibold tracking-wide transition-colors',
+                    isActive ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-100 hover:border-slate-200'
                   )}
                   aria-current={isActive ? 'page' : undefined}
                 >
                   <Icon className="mb-0.5 h-3.5 w-3.5" />
-                  <span>{item.label}</span>
+                  <span >{item.label}</span>
                 </Link>
               </li>
             );
@@ -65,7 +65,7 @@ export function TutorNav({ mobile = false }: TutorNavProps) {
                   'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
                   isActive
                     ? 'bg-blue-500 text-white shadow-md shadow-blue-700'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-50 hover:border-slate-200 shadow-md shadow-slate-100 hover:shadow-slate-200'
                 )}
                 aria-current={isActive ? 'page' : undefined}
               >

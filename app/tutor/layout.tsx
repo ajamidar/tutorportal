@@ -38,7 +38,7 @@ export default function TutorLayout({ children }: { children: ReactNode }) {
             <Button
               type="submit"
               variant="outline"
-              className="w-full bg-red-500 text-white hover:bg-red-600 hover:text-white rounded-xl"
+              className="w-full bg-red-500 text-white hover:bg-red-600 hover:text-white rounded-xl shadow-md shadow-red-200 hover:shadow-red-300"
             >
               <LogOut className="mr-1 h-4 w-4" />
               Sign Out
