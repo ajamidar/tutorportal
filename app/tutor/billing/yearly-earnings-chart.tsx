@@ -35,7 +35,7 @@ export function YearlyEarningsChart({ data, year }: YearlyEarningsChartProps) {
   const currentMonth = new Date().getMonth();
 
   return (
-    <Card className="relative overflow-hidden border border-slate-200/80 bg-white shadow-xl shadow-indigo-100/40">
+    <Card className="relative overflow-hidden border border-yellow-100/80 bg-white shadow-md shadow-yellow-100">
       {/* Subtle background decoration */}
       <div className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full bg-gradient-to-br from-indigo-100/40 to-violet-100/30 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-12 -left-12 h-44 w-44 rounded-full bg-gradient-to-tr from-cyan-100/30 to-blue-100/20 blur-2xl" />
@@ -110,15 +110,14 @@ export function YearlyEarningsChart({ data, year }: YearlyEarningsChartProps) {
                   >
                     {/* Bar fill */}
                     <div
-                      className={`absolute inset-0 transition-all duration-300 ${
-                        isBestMonth
-                          ? 'bg-gradient-to-t from-amber-400 via-amber-300 to-yellow-200 shadow-inner'
-                          : isCurrentMonth
-                            ? 'bg-gradient-to-t from-cyan-500 via-cyan-400 to-teal-300 shadow-inner'
-                            : hasEarnings
-                              ? 'bg-gradient-to-t from-indigo-500 via-indigo-400 to-violet-300 group-hover:from-indigo-600 group-hover:via-indigo-500 group-hover:to-violet-400'
-                              : 'bg-slate-100'
-                      }`}
+                      className={`absolute inset-0 transition-all duration-300 ${isBestMonth
+                        ? 'bg-gradient-to-t from-amber-400 via-amber-300 to-yellow-200 shadow-inner'
+                        : isCurrentMonth
+                          ? 'bg-gradient-to-t from-cyan-500 via-cyan-400 to-teal-300 shadow-inner'
+                          : hasEarnings
+                            ? 'bg-gradient-to-t from-indigo-500 via-indigo-400 to-violet-300 group-hover:from-indigo-600 group-hover:via-indigo-500 group-hover:to-violet-400'
+                            : 'bg-slate-100'
+                        }`}
                     />
 
                     {/* Shine effect on hover */}
@@ -129,22 +128,20 @@ export function YearlyEarningsChart({ data, year }: YearlyEarningsChartProps) {
                     {/* Glow on top for highlighted bars */}
                     {(isBestMonth || isCurrentMonth) && (
                       <div
-                        className={`absolute -top-1 left-1/2 h-2 w-3/4 -translate-x-1/2 rounded-full blur-sm ${
-                          isBestMonth ? 'bg-amber-300/50' : 'bg-cyan-300/50'
-                        }`}
+                        className={`absolute -top-1 left-1/2 h-2 w-3/4 -translate-x-1/2 rounded-full blur-sm ${isBestMonth ? 'bg-amber-300/50' : 'bg-cyan-300/50'
+                          }`}
                       />
                     )}
                   </div>
 
                   {/* Month label */}
                   <span
-                    className={`mt-2.5 text-[10px] font-semibold tracking-wide transition-colors sm:text-[11px] ${
-                      isCurrentMonth
-                        ? 'text-cyan-600'
-                        : isBestMonth
-                          ? 'text-amber-600'
-                          : 'text-slate-400 group-hover:text-slate-600'
-                    }`}
+                    className={`mt-2.5 text-[10px] font-semibold tracking-wide transition-colors sm:text-[11px] ${isCurrentMonth
+                      ? 'text-cyan-600'
+                      : isBestMonth
+                        ? 'text-amber-600'
+                        : 'text-slate-400 group-hover:text-slate-600'
+                      }`}
                   >
                     {d.month}
                   </span>

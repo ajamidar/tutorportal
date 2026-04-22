@@ -130,7 +130,7 @@ export default async function TutorBillingPage() {
         <YearlyEarningsChart data={yearlyData} year={currentYear} />
       </div>
 
-      <Card>
+      <Card className="border-slate-300 shadow-md shadow-slate-400">
         <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-600">Finance</p>
@@ -171,7 +171,7 @@ export default async function TutorBillingPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200 bg-white">
+                <tbody className="divide-y divide-slate-200 bg-white ">
                   {invoices.map((invoice) => {
                     const status = getStatusPresentation(invoice.status);
 
@@ -196,7 +196,7 @@ export default async function TutorBillingPage() {
                                 href={`/api/invoices/${invoice.id}/receipt`}
                                 className="inline-flex h-10 items-center justify-center rounded-lg border border-slate-300 shadow-sm shadow-slate-300 px-3 text-sm font-medium text-green-700 transition hover:bg-slate-100"
                               >
-                                <Download className='h-4 w-4 mr-1'/>Download Receipt
+                                <Download className='h-4 w-4 mr-1' />Download Receipt
                               </a>
                             ) : null}
                             <CopyLinkButton paymentLink={invoice.stripe_payment_link} />
