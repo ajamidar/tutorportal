@@ -60,7 +60,7 @@ export default async function PortalBillingPage() {
                       <p className="text-sm font-semibold text-slate-900 sm:text-base">
                         {formatAmountPounds(invoice.amount_pence)}
                       </p>
-                      <p className="mt-1 text-xs text-slate-500">Issued {formatDate(invoice.created_at)}</p>
+                      <p className="mt-1 text-xs text-slate-500">Issued{formatDate(invoice.created_at)}</p>
                     </div>
                     <Badge variant={status.variant}>{status.label}</Badge>
                   </div>
