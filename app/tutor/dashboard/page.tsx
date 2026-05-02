@@ -43,7 +43,7 @@ export default async function TutorDashboardPage() {
   return (
     <main className="space-y-5 sm:space-y-6">
       <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Card className={hasRevenue ? 'border-amber-200 bg-amber-50/80' : 'border-slate-300 shadow-md shadow-slate-400'}>
+        <Card className={hasRevenue ? 'border-amber-200 bg-amber-50/80 shadow-md shadow-amber-300/60' : 'border-slate-300 shadow-md shadow-slate-400'}>
           <CardHeader>
             <div className="flex items-center gap-1">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-500">
